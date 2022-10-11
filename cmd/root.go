@@ -8,7 +8,12 @@ import (
 	"os"
 )
 
+type Configuration struct {
+	TOKEN string
+}
+
 var cfgFile string
+var Config Configuration
 
 var rootCmd = &cobra.Command{
 	Use:   "todo",
@@ -46,9 +51,23 @@ func initConfig() {
 		viper.SetConfigName(".todo")
 	}
 
+	viper.SetEnvPrefix("TODOIST")
 	viper.AutomaticEnv()
+	Config.TOKEN = viper.GetString("TOKEN")
 
-	if err := viper.ReadInConfig(); err == nil {
-		// fmt.Println("Config file:", viper.ConfigFileUsed())
+	if Config.TOKEN == "" {
+		if err := viper.ReadInConfig(); err == nil {
+			// fmt.Println("Config file:", viper.ConfigFileUsed())
+			err := viper.Unmarshal(&Config)
+			if err != nil {
+				fmt.Printf("Error reading config file, %v\n", err)
+				os.Exit(1)
+			}
+		}
+	}
+
+	if Config.TOKEN == "" {
+		fmt.Println("Missing TOKEN, use --help")
+		os.Exit(1)
 	}
 }
