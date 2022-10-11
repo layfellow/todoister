@@ -1,5 +1,9 @@
 # Minimal Todoist CLI client
 
+## Installation
+
+TODO
+
 ## Configuration
 
 Write a `.todo.yaml` (*notice the dot `.`*) file in your `$HOME` directory with the following:
