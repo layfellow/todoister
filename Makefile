@@ -1,6 +1,6 @@
 bin = todo
 
-todo: main.go cmd/root.go cmd/version.go
+todo: main.go cmd/*.go
 	go build -o $(bin) main.go
 
 clean:
