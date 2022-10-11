@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/ides15/todoist"
 	"github.com/spf13/cobra"
 )
 
@@ -11,8 +13,19 @@ func init() {
 
 var backupCmd = &cobra.Command{
 	Use:   "backup",
-	Short: "Download the latest backup from Todoist",
+	Short: "Download a backup in JSON format from Todoist",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(Config.TOKEN)
+		client, err := todoist.NewClient(Config.TOKEN)
+		if err != nil {
+			panic(err)
+		}
+		projects, _, err := client.Projects.List(context.Background(), "")
+		if err != nil {
+			panic(err)
+		}
+
+		for _, p := range projects {
+			fmt.Println(p.ID, p.Name)
+		}
 	},
 }
