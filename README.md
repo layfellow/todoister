@@ -2,6 +2,9 @@
 
 ## Installation
 
+Minimal Go release required: **1.17**
+
+
 TODO
 
 ## Configuration
