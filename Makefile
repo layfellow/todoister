@@ -1,4 +1,4 @@
-bin = todo
+bin = todoister
 
 all: build/linux/amd64/$(bin) build/darwin/amd64/$(bin) build/darwin/arm64/$(bin) build/windows/amd64/$(bin).exe
 
