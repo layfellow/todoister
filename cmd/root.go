@@ -16,11 +16,11 @@ var cfgFile string
 var Config Configuration
 
 var rootCmd = &cobra.Command{
-	Use:   "todo",
+	Use:   "todoister",
 	Short: "Minimal todoist CLI client",
 	Long:  "Lorem ipsum dolor sit amet", // TODO
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Usage: todo")
+		fmt.Println("Usage: todoister")
 	},
 }
 
