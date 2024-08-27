@@ -1,7 +1,7 @@
 package main
 
 import (
-	"todoist-cli/cmd"
+	"todoister/cmd"
 )
 
 func main() {
