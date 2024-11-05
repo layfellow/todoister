@@ -8,11 +8,11 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(backupCmd)
+	rootCmd.AddCommand(downloadCmd)
 }
 
-var backupCmd = &cobra.Command{
-	Use:   "backup",
+var downloadCmd = &cobra.Command{
+	Use:   "download",
 	Short: "Download a backup in JSON format from Todoist",
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := todoist.NewClient(Config.TOKEN)
