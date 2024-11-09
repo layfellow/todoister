@@ -9,6 +9,7 @@ import (
 
 func init() {
 	cobra.OnInitialize(util.InitConfig)
+	rootCmd.PersistentFlags().StringVarP(&util.TodoistToken, "token", "t", "", "Override Todoist token.")
 }
 
 var rootCmd = &cobra.Command{

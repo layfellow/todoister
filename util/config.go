@@ -8,31 +8,38 @@ import (
 )
 
 func InitConfig() {
+	// Already set at command line
+	if TodoistToken != "" {
+		return
+	}
+
+	if err := viper.BindEnv("token", "TODOIST_TOKEN"); err != nil {
+		log.Fatalf("Error binding environment variable: %v", err)
+	}
+	if TodoistToken = viper.GetString("token"); TodoistToken != "" {
+		return
+	}
+
+	viper.SetConfigType("json")
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("Failed to get home directory: %v", err)
 	}
+	preferredConfigPath := filepath.Join(homeDir, ".config", "todoister", "config.json")
+	alternativeConfigPath := filepath.Join(homeDir, ".todoister.json")
 
-	// Preferred location is ~/.config/todoister/config.json
-	configPath := filepath.Join(homeDir, ".config", "todoister", "config.json")
-
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		// Fallback location is ~/.todoister.json
-		configPath = filepath.Join(homeDir, ".todoister.json")
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			log.Fatalf("Configuration file not found in either location")
-		}
+	if _, err := os.Stat(preferredConfigPath); err == nil {
+		viper.SetConfigFile(preferredConfigPath)
+	} else if _, err := os.Stat(alternativeConfigPath); err == nil {
+		viper.SetConfigFile(alternativeConfigPath)
+	} else {
+		log.Fatalf("Failed to read configuration file: %v", err)
 	}
-
-	viper.SetConfigFile(configPath)
-	viper.SetConfigType("json")
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file: %v", err)
+		log.Fatalf("Error reading configuration file: %v", err)
 	}
-
-	TodoistToken = viper.GetString("token")
-	if TodoistToken == "" {
-		log.Fatalf("Token not found in configuration file")
+	if TodoistToken = viper.GetString("token"); TodoistToken == "" {
+		log.Fatal("Token must be set via config file, environment variable, or command line argument")
 	}
 }
