@@ -2,36 +2,44 @@
 
 ## Installation
 
-Minimal Go release required: **1.17**
+Minimum Go release required: **1.22.2**
 
 
-TODO
+**TODO**
 
 ## Configuration
 
-Write a `.todo.yaml` (*notice the dot `.`*) file in your `$HOME` directory with the following:
+Write a `~/.config/todoister/config.json` or  `~/.todoister.json` file and set:
 
-```yaml
-TOKEN: <Your Todoist API token>
+```json
+{
+  "token": "<Your Todoist API token>"
+}
 ```
 
-or, alternatively, set an environment variable:
+or set an environment variable:
 
 ```sh
-$ export TODOIST_TOKEN=<Your Todoist API token>
+$ export TODOIST_TOKEN='<Your Todoist API token>'
 ```
 
-The exported environment variable overrides the YAML file.
+or provide the token as a command line argument:
+
+```sh
+$ todoister --token='<Your Todoist API token>' COMMAND
+```
+
+The command line `--token` option overrides the environment variable, which in turn overrides the configuration file.
 
 ## Commands
 
-**todo backup [DEST]**
+**todoister download [DEST]**
 
-Download the most recent Todoist backup to optional directory **`DEST`**. By default, use the current directory.
+Download all Todoist projects to directory **`DEST`**. By default, use the current directory.
 
 *Examples*
 
 ```sh
-$ todo backup
-$ todo backup ~/Downloads
+$ todoister download 
+$ todoister download ~/projects
 ```
