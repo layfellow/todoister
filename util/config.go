@@ -8,8 +8,7 @@ import (
 )
 
 func InitConfig() {
-	// Already set at command line
-	if TodoistToken != "" {
+	if TodoistToken != "" { // Already set at command line via --token option.
 		return
 	}
 

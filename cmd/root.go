@@ -7,11 +7,6 @@ import (
 	"todoister/util"
 )
 
-func init() {
-	cobra.OnInitialize(util.InitConfig)
-	rootCmd.PersistentFlags().StringVarP(&util.TodoistToken, "token", "t", "", "Override Todoist token.")
-}
-
 var rootCmd = &cobra.Command{
 	Use:   "todoister",
 	Short: "Minimal todoist CLI client",
@@ -19,6 +14,11 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Usage: todoister")
 	},
+}
+
+func init() {
+	cobra.OnInitialize(util.InitConfig)
+	rootCmd.PersistentFlags().StringVarP(&util.TodoistToken, "token", "t", "", "Override Todoist token.")
 }
 
 func Execute() {
