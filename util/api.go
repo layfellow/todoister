@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -12,16 +11,14 @@ const (
 	TodoistURL = "https://api.todoist.com/sync/v9/sync"
 )
 
-var TodoistToken string
-
-func GetTodoistData() (*TodoistData, error) {
+func GetTodoistData(token string) *TodoistData {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", TodoistURL, nil)
 	if err != nil {
-		log.Fatalf("Failed to create request: %v", err)
+		Die("Failed to create request", err)
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", TodoistToken))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	req.Header.Set("Content-Type", "application/json")
 
 	q := req.URL.Query()
@@ -30,26 +27,26 @@ func GetTodoistData() (*TodoistData, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalf("Failed to make request: %v", err)
+		Die("Failed to make request", err)
 	}
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
-			log.Printf("Failed to close response body: %v", cerr)
+			Warn("Failed to close response body", cerr)
 		}
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Unexpected status code: %d", resp.StatusCode)
+		Die(fmt.Sprintf("Unexpected status code %d", resp.StatusCode), nil)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Failed to read response body: %v", err)
+		Die("Failed to read response body", err)
 	}
 
 	var todoistData TodoistData
 	if err := json.Unmarshal(body, &todoistData); err != nil {
-		log.Fatalf("Failed to unmarshal JSON: %v", err)
+		Die("Failed to unmarshal JSON", err)
 	}
-	return &todoistData, nil
+	return &todoistData
 }

@@ -1,44 +1,75 @@
 package util
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-func InitConfig() {
-	if TodoistToken != "" { // Already set at command line via --token option.
-		return
-	}
+const (
+	ConfigFile    = "config"
+	ConfigFileExt = "json"
+)
 
-	if err := viper.BindEnv("token", "TODOIST_TOKEN"); err != nil {
-		log.Fatalf("Error binding environment variable: %v", err)
-	}
-	if TodoistToken = viper.GetString("token"); TodoistToken != "" {
-		return
-	}
+type Log struct {
+	Name string
+}
 
-	viper.SetConfigType("json")
+type Export struct {
+	Path   string
+	Format string
+	Depth  int
+}
+
+type ConfigType struct {
+	Token string
+	Log
+	Export
+}
+
+func InitConfig(config *ConfigType) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatalf("Failed to get home directory: %v", err)
+		Die("Error getting user home directory", err)
 	}
-	preferredConfigPath := filepath.Join(homeDir, ".config", "todoister", "config.json")
-	alternativeConfigPath := filepath.Join(homeDir, ".todoister.json")
 
-	if _, err := os.Stat(preferredConfigPath); err == nil {
-		viper.SetConfigFile(preferredConfigPath)
-	} else if _, err := os.Stat(alternativeConfigPath); err == nil {
-		viper.SetConfigFile(alternativeConfigPath)
+	viper.SetEnvPrefix("TODOIST")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+	viper.SetConfigName(ConfigFile)
+	viper.SetConfigType(ConfigFileExt)
+
+	// If $XDG_CONFIG_HOME is set, use it
+	if xdgConfigHome := os.Getenv("XDG_CONFIG_HOME"); xdgConfigHome != "" {
+		viper.AddConfigPath(filepath.Join(xdgConfigHome, Prog))
 	} else {
-		log.Fatalf("Failed to read configuration file: %v", err)
+		// Otherwise use default XDG-compliant ~/.config
+		viper.AddConfigPath(filepath.Join(homeDir, ".config", Prog))
 	}
 
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading configuration file: %v", err)
+	if err = viper.ReadInConfig(); err != nil {
+		// Fall back to traditional ~/.todoister.json
+		viper.SetConfigFile(filepath.Join(homeDir, fmt.Sprintf(".%s.%s", Prog, ConfigFileExt)))
+		_ = viper.ReadInConfig()
 	}
-	if TodoistToken = viper.GetString("token"); TodoistToken == "" {
-		log.Fatal("Token must be set via config file, environment variable, or command line argument")
+
+	if config.Token == "" {
+		if config.Token = viper.GetString("token"); config.Token == "" {
+			Die("Missing Todoist token", nil)
+		}
+	}
+	if config.Log.Name == "" {
+		config.Log.Name, _ = ExpandPath(viper.GetString("log.name"))
+	}
+	if config.Export.Path == "" {
+		config.Export.Path, _ = ExpandPath(viper.GetString("export.path"))
+	}
+	if config.Export.Format == "" {
+		config.Export.Format, _ = ExpandPath(viper.GetString("export.format"))
+	}
+	if config.Export.Depth == 0 {
+		config.Export.Depth = viper.GetInt("export.depth")
 	}
 }

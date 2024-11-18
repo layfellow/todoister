@@ -3,9 +3,10 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"os"
 	"todoister/util"
 )
+
+var ConfigValue util.ConfigType
 
 var rootCmd = &cobra.Command{
 	Use:   "todoister",
@@ -16,14 +17,16 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+func initAll() {
+	util.InitConfig(&ConfigValue)
+	util.InitLogger(ConfigValue.Log.Name)
+}
+
 func init() {
-	cobra.OnInitialize(util.InitConfig)
-	rootCmd.PersistentFlags().StringVarP(&util.TodoistToken, "token", "t", "", "Override Todoist token.")
+	cobra.OnInitialize(initAll)
+	rootCmd.PersistentFlags().StringVarP(&ConfigValue.Token, "token", "t", "", "Override Todoist token.")
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	_ = rootCmd.Execute()
 }

@@ -161,7 +161,7 @@ type Duration struct {
 	Unit   string `json:"unit"`
 }
 
-func HierarchicalData(todoistData *TodoistData) ([]*ExportedProject, error) {
+func HierarchicalData(todoistData *TodoistData) []*ExportedProject {
 	// Persistent variable to hold the root ExportedProject references.
 	var roots []*ExportedProject
 
@@ -336,5 +336,5 @@ func HierarchicalData(todoistData *TodoistData) ([]*ExportedProject, error) {
 			append(taskMap[reminder.ItemID].Reminders, reminderMap[reminder.ID])
 	}
 
-	return roots, nil
+	return roots
 }
