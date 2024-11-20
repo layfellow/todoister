@@ -10,7 +10,7 @@ import (
 
 const (
 	ConfigFile    = "config"
-	ConfigFileExt = "json"
+	ConfigFileExt = "toml"
 )
 
 type Log struct {
@@ -50,7 +50,7 @@ func InitConfig(config *ConfigType) {
 	}
 
 	if err = viper.ReadInConfig(); err != nil {
-		// Fall back to traditional ~/.todoister.json
+		// Fall back to more traditional ~/.todoister.toml
 		viper.SetConfigFile(filepath.Join(homeDir, fmt.Sprintf(".%s.%s", Prog, ConfigFileExt)))
 		_ = viper.ReadInConfig()
 	}

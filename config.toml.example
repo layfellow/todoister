@@ -1,0 +1,9 @@
+token = "deadb33fdeadb33fdeadb33fdeadb33fdeadb33f"
+
+[log]
+name = "$HOME/log/todoister.log"
+
+[export]
+path = "$HOME/todoist"
+format = "yaml"
+depth = 3
