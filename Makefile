@@ -1,17 +1,27 @@
-bin = todoister
+BIN = todoister
+TAG = $(shell git describe --tags --always --abbrev=0)
 
-all: build/linux/amd64/$(bin) build/darwin/amd64/$(bin) build/darwin/arm64/$(bin)
+build:
+	go build -o build/$(BIN)
+	GOOS=linux GOARCH=amd64 go build -o build/$(BIN)-linux-amd64
+	GOOS=darwin GOARCH=amd64 go build -o build/$(BIN)-darwin-amd64
+	GOOS=darwin GOARCH=arm64 go build -o build/$(BIN)-darwin-arm64
 
-build/linux/amd64/$(bin): main.go cmd/*.go util/*.go
-	GOOS=linux GOARCH=amd64 go build -o $@
+lint:
+	golangci-lint run
 
-build/darwin/amd64/$(bin): main.go cmd/*.go util/*.go
-	GOOS=darwin GOARCH=amd64 go build -o $@
+dependencies:
+	go get -u
+	go mod tidy
 
-build/darwin/arm64/$(bin): main.go cmd/*.go util/*.go
-	GOOS=darwin GOARCH=arm64 go build -o $@
+releases:
+	gh release create $(TAG) ./build/$(BIN)-linux-amd64 ./build/$(BIN)-darwin-amd64 ./build/$(BIN)-darwin-arm64
+
+install:
+	go env -w GOBIN=$$HOME/bin
+	go install
 
 clean:
-	rm -rf ./build
+	rm -rf build
 
-.PHONY: clean
+.PHONY: build lint dependencies releases install clean
