@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/layfellow/todoister/util"
 	"github.com/spf13/cobra"
 	"strings"
-	"todoister/util"
 )
 
 var useJSON bool

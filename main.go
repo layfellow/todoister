@@ -1,7 +1,7 @@
 package main
 
 import (
-	"todoister/cmd"
+	"github.com/layfellow/todoister/cmd"
 )
 
 func main() {

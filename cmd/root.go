@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/layfellow/todoister/util"
 	"github.com/spf13/cobra"
-	"todoister/util"
 )
 
 var ConfigValue util.ConfigType
