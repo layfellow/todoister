@@ -1,9 +1,14 @@
-token = "deadb33fdeadb33fdeadb33fdeadb33fdeadb33f"
+# You should at least set this.
+token = ""
 
+# Log file when running non-interactively.
+# Default is $HOME/.cache/todoister/out.log
 [log]
-name = "$HOME/log/todoister.log"
+name = ""
 
+# Argument and options for `todoister export`.
+# Defaults are current directory, json, 0 depth
 [export]
-path = "$HOME/todoist"
-format = "yaml"
-depth = 3
+path = ""
+format = ""
+depth = 0
