@@ -1,4 +1,4 @@
-module todoister
+module github.com/layfellow/todoister
 
 go 1.22.0
 
