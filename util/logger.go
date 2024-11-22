@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 )
 
+// Default values for the logger.
 const (
 	Prog                = "todoister"
 	DefaultLogFile      = "out.log"
@@ -20,16 +21,19 @@ var (
 	systemd = isSystemdService()
 )
 
+// isatty returns true if the program is running in a terminal.
 func isatty() bool {
 	_, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
 	return err == nil
 }
 
+// isSystemdService returns true if the program is running as a systemd service.
 func isSystemdService() bool {
 	_, ok := os.LookupEnv("SYSTEMD_EXEC_PID")
 	return ok
 }
 
+// FileLogWriter is a custom log writer that rotates log files.
 type FileLogWriter struct {
 	logfile      string
 	logFileSize  int64
@@ -38,8 +42,12 @@ type FileLogWriter struct {
 	currentSize  int64
 }
 
+// Write writes the log entry to the current log file.
+// - p: the byte slice to write
+// Returns the number of bytes written and an error, if any.
 func (w *FileLogWriter) Write(p []byte) (n int, err error) {
 	if w.currentSize+int64(len(p)) > w.logFileSize {
+		// Rotate the log file if it exceeds the maximum size.
 		err := w.rotate()
 		if err != nil {
 			return 0, err
@@ -51,6 +59,7 @@ func (w *FileLogWriter) Write(p []byte) (n int, err error) {
 	return n, err
 }
 
+// rotate rotates the log files by renaming them and creating a new log file.
 func (w *FileLogWriter) rotate() error {
 	if w.currentFile != nil {
 		err := w.currentFile.Close()
@@ -90,6 +99,11 @@ func (w *FileLogWriter) rotate() error {
 	return nil
 }
 
+// NewFileLogWriter creates a Go writer for the log file.
+// - logfile: the path to the log file
+// - logFileSize: the maximum size of the log file
+// - logFileCount: the number of log files to keep
+// Returns a pointer to a FileLogWriter and an error, if any.
 func NewFileLogWriter(logfile string, logFileSize int64, logFileCount int) (*FileLogWriter, error) {
 	writer := &FileLogWriter{
 		logfile:      logfile,
@@ -107,6 +121,8 @@ func NewFileLogWriter(logfile string, logFileSize int64, logFileCount int) (*Fil
 	return writer, nil
 }
 
+// InitLogger initializes the logger.
+// - logfile: the path to the log file
 func InitLogger(logfile string) {
 	// No need to initialize the logger if running in a terminal or as a systemd service.
 	if tty || systemd {
@@ -141,6 +157,10 @@ func InitLogger(logfile string) {
 	slog.SetDefault(slog.New(slog.NewTextHandler(writer, nil)))
 }
 
+// writeLogEntry writes a log entry to the console or log file.
+// - level: the log level
+// - text: the log message
+// - e: an error, if any
 func writeLogEntry(level slog.Level, text string, e error) {
 	var formattedText string
 	if e != nil {
@@ -148,6 +168,8 @@ func writeLogEntry(level slog.Level, text string, e error) {
 	} else {
 		formattedText = text
 	}
+
+	// Write the formatted text to the console if running interactively or as a systemd service.
 	if tty || systemd {
 		if level == slog.LevelInfo {
 			_, _ = fmt.Fprintln(os.Stdout, formattedText)

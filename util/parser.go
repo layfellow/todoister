@@ -161,6 +161,10 @@ type Duration struct {
 	Unit   string `json:"unit"`
 }
 
+// HierarchicalData converts TodoistData to a hierarchical structure of Exported* structs.
+//   - todoistData: a pointer to a TodoistData struct
+//
+// Returns a slice of root ExportedProject references.
 func HierarchicalData(todoistData *TodoistData) []*ExportedProject {
 	// Persistent variable to hold the root ExportedProject references.
 	var roots []*ExportedProject

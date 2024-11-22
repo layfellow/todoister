@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// ExportFormat is either JSON or YAML.
 type ExportFormat int
 
 const (
@@ -15,11 +16,15 @@ const (
 	YAML
 )
 
+// Deafult export paths.
 const (
 	DefaultExportPath = "index.json"
 	YAMLExportPath    = "index.yaml"
 )
 
+// ExpandPath expands a path that starts with a tilde (~) or contains environment variables.
+// - path: the path to expand
+// Returns the expanded path and an error, if any.
 func ExpandPath(path string) (string, error) {
 	if strings.HasPrefix(path, "~") {
 		homeDir, err := os.UserHomeDir()
@@ -32,6 +37,11 @@ func ExpandPath(path string) (string, error) {
 	return path, nil
 }
 
+// normalizePathnames extracts the directory and basename from a path, setting the basename
+// to the default if it isnʼt a filename.
+// - path: the path to normalize
+// - format: the export format (JSON or YAML)
+// Returns the directory and basename and an error, if any.
 func normalizePathnames(path string, format ExportFormat) (string, string, error) {
 	expandedPath, err := ExpandPath(path)
 	if err != nil {
@@ -40,9 +50,11 @@ func normalizePathnames(path string, format ExportFormat) (string, string, error
 	dirname := filepath.Dir(expandedPath)
 	basename := filepath.Base(expandedPath)
 
+	// filepath.Dir returns "." for empty paths
 	if dirname == "." {
 		dirname = ""
 	}
+	// If the basename is empty or isnʼt a filename, use the default export path.
 	if basename == "." || !strings.Contains(basename, ".") {
 		dirname = expandedPath
 		basename = DefaultExportPath
@@ -53,6 +65,8 @@ func normalizePathnames(path string, format ExportFormat) (string, string, error
 	return dirname, basename, nil
 }
 
+// clearDirectory removes the directory and its contents, then creates a new directory.
+// - dirname: the directory to clear
 func clearDirectory(dirname string) error {
 	pathInfo, err := os.Stat(dirname)
 	if err == nil && pathInfo.IsDir() {
@@ -67,6 +81,11 @@ func clearDirectory(dirname string) error {
 	return nil
 }
 
+// writeProjectFile writes a project to a file in the specified format.
+// - path: the path to the file
+// - format: the export format (JSON or YAML)
+// - project: a pointer to the project to write, already prepared for export
+// - includeSubprojects: whether to include subprojects in the export
 func writeProjectFile(path string, format ExportFormat, project *ExportedProject, includeSubprojects bool) error {
 	outputFile, err := os.Create(path)
 	if err != nil {
@@ -106,6 +125,12 @@ func writeProjectFile(path string, format ExportFormat, project *ExportedProject
 	return nil
 }
 
+// writeProject writes a project to a file or directory in the specified format.
+// - dirname: the directory to write to, already normalized
+// - basename: the base filename, already normalized
+// - format: the export format (JSON or YAML)
+// - depth: the depth of the subdirectory tree
+// - project: a pointer to the project to write
 func writeProject(dirname string, basename string, format ExportFormat, depth int, project *ExportedProject) error {
 	if dirname != "" {
 		if err := clearDirectory(dirname); err != nil {
@@ -123,6 +148,7 @@ func writeProject(dirname string, basename string, format ExportFormat, depth in
 			return err
 		}
 		for _, subproject := range project.Subprojects {
+			// Recursively walk the subprojects.
 			err := writeProject(filepath.Join(dirname, subproject.Name), basename, format, depth-1, subproject)
 			if err != nil {
 				return err
@@ -132,6 +158,11 @@ func writeProject(dirname string, basename string, format ExportFormat, depth in
 	return nil
 }
 
+// WriteHierarchicalData writes a hierarchical project structure to a file or directory in the specified format.
+// - roots: a slice of root ExportedProject references
+// - format: the export format (JSON or YAML)
+// - depth: the depth of the subdirectory tree
+// - path: the path to write to
 func WriteHierarchicalData(roots []*ExportedProject, format ExportFormat, depth int, path string) error {
 	dirname, basename, err := normalizePathnames(path, format)
 	if err != nil {

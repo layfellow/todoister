@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Default configuration file name and extension.
 const (
 	ConfigFile    = "config"
 	ConfigFileExt = "toml"
@@ -29,6 +30,8 @@ type ConfigType struct {
 	Export
 }
 
+// InitConfig initializes the configuration from the configuration file and environment variables.
+//   - config: a pointer to a ConfigType struct to store the configuration.
 func InitConfig(config *ConfigType) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -55,6 +58,7 @@ func InitConfig(config *ConfigType) {
 		_ = viper.ReadInConfig()
 	}
 
+	// Config.Token may have been set already by the -t, --token flag.
 	if config.Token == "" {
 		if config.Token = viper.GetString("token"); config.Token == "" {
 			Die("Missing Todoist token", nil)

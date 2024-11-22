@@ -11,6 +11,10 @@ const (
 	TodoistURL = "https://api.todoist.com/sync/v9/sync"
 )
 
+// GetTodoistData retrieves data from the Todoist API.
+//   - token: the Todoist API token
+//
+// Returns a pointer to a TodoistData struct with the data.
 func GetTodoistData(token string) *TodoistData {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", TodoistURL, nil)
