@@ -34,13 +34,16 @@ main() {
 		exit 1
 	fi
 
+	printf "installer: downloading from %s...\n" "$url"
 	eval "$fetch_cmd"
 
 	chmod +x $binary
 
 	if [ -d "$HOME/.local/bin" ]; then
+		printf "installer: installing %s to \$HOME/.local/bin\n" "$binary"
 		mv $binary "$HOME/.local/bin"
 	elif [ -d "$HOME/bin" ]; then
+		printf "installer: installing %s to \$HOME/bin" "$binary"
 		mv $binary "$HOME/bin"
 	else
 		printf "installer: neither \$HOME/.local/bin nor \$HOME/bin found; leaving binary in current directory.\n" >&2
@@ -50,3 +53,4 @@ main() {
 }
 
 main
+todoister --version
