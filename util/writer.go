@@ -24,6 +24,7 @@ const (
 
 // ExpandPath expands a path that starts with a tilde (~) or contains environment variables.
 // - path: the path to expand
+//
 // Returns the expanded path and an error, if any.
 func ExpandPath(path string) (string, error) {
 	if strings.HasPrefix(path, "~") {
@@ -41,6 +42,7 @@ func ExpandPath(path string) (string, error) {
 // to the default if it isnʼt a filename.
 // - path: the path to normalize
 // - format: the export format (JSON or YAML)
+//
 // Returns the directory and basename and an error, if any.
 func normalizePathnames(path string, format ExportFormat) (string, string, error) {
 	expandedPath, err := ExpandPath(path)

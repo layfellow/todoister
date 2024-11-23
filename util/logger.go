@@ -44,6 +44,7 @@ type FileLogWriter struct {
 
 // Write writes the log entry to the current log file.
 // - p: the byte slice to write
+//
 // Returns the number of bytes written and an error, if any.
 func (w *FileLogWriter) Write(p []byte) (n int, err error) {
 	if w.currentSize+int64(len(p)) > w.logFileSize {
@@ -103,6 +104,7 @@ func (w *FileLogWriter) rotate() error {
 // - logfile: the path to the log file
 // - logFileSize: the maximum size of the log file
 // - logFileCount: the number of log files to keep
+//
 // Returns a pointer to a FileLogWriter and an error, if any.
 func NewFileLogWriter(logfile string, logFileSize int64, logFileCount int) (*FileLogWriter, error) {
 	writer := &FileLogWriter{
