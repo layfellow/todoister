@@ -6,15 +6,22 @@
 
 Todoister es un cliente CLI simple para [Todoist](https://todoist.com/) escrito en Go.
 
-**Esta es una versión temprana, con funcionalidad muy reducida.** Por ahora, solo
-puede exportar proyectos y tareas a un árbol jerárquico de archivos JSON o YAML.
+**Esta es una versión temprana, con funcionalidad muy reducida.** Actualmente implementado:
 
-Lo desarrollé porque la única opción de exportación de Todoist es hacia un archivo de valores
-separados por comas no estructurado
-([el horror, el horror](https://www.oxfordreference.com/display/10.1093/acref/9780199567454.001.0001/acref-9780199567454-e-931)), que carece del detalle necesario. Además, buscaba algo compatible con tareas de cron
-para respaldar automáticamente mis proyectos en un formato más manejable, como JSON o YAML.
+- `list`: listar proyectos.
+- `tasks`: listar tareas de proyectos.
+- `export`: exportar proyectos y tareas a archivos JSON o YAML.
 
-Pronto espero agregar más características, como la gestión de tareas y la creación de proyectos.
+Desarrollé este utilitario porque quería una forma simple y rápida de ver mis tareas y
+proyectos de Todoist sin salir del terminal.
+
+Además, estaba insatisfecho con la única opción de exportación de Todoist, que es valores
+separados por comas no estructurados
+([el horror, el horror](https://www.oxfordreference.com/display/10.1093/acref/9780199567454.001.0001/acref-9780199567454-e-931)),
+que carecen del detalle que necesito. Quería además algo compatible con tareas de cron para
+respaldos no supervisados, en un formato más manejable, como JSON o YAML.
+
+*Próximamente más características, como gestión de tareas, creación de proyectos, gestión de etiquetas, etc.*
 
 ## Instalación
 
@@ -27,8 +34,9 @@ $ curl -sfL https://parroquiano.net/todoister/installer.sh | sh
 Este script descarga el binario más reciente para su plataforma y lo instala en `~/.local/bin`
 o `~/bin`.
 
-Para Windows... eh, no tengo acceso a un sistema Windows para desarrollar y probar, así que no
-hay versiones para esta plataforma, pero el binario de Linux debería funcionar en
+Para Windows... eh,
+[no uso Windows](https://www.fsf.org/es/news/la-vida-es-mejor-juntos-cuando-evitas-windows-11),
+así que no hay versiones para esta plataforma, pero el binario de Linux debería funcionar en
 [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/).
 
 Alternativamente, si tiene Go (versión 1.22 o posterior), se puede descargar, compilar e instalar
@@ -62,6 +70,7 @@ $ todoister --token='su-token-de-API-de-todoist' comando ...
 La opción `--token` tiene prioridad sobre la variable de entorno, que a su vez tiene prioridad
 sobre el archivo de configuración.
 
+
 ## Uso
 
 ```sh
@@ -75,6 +84,7 @@ todoister [OPCIONES] COMANDO
 - `-t`, `--token` Usa este token de API de Todoist en lugar de usar el del archivo de configuración
    o variable de entorno
 
+
 ## COMANDOS
 
 ### `help`
@@ -84,6 +94,68 @@ todoister help [COMANDO]
 ```
 
 Muestra el mensaje de ayuda para `COMANDO` o ayuda general si no se proporciona `COMANDO`.
+
+
+### `list`, `ls`
+
+```sh
+todoister ls [PROYECTO]...
+```
+Lista proyectos y subproyectos.
+
+`PROYECTO`... son los nombres de uno o más proyectos o subproyectos.
+Si no se proporciona ningún `PROYECTO`, se listan todos los proyectos.
+
+Puede especificar un nombre de proyecto por su ruta completa, por ejemplo, `Trabajo/Proyecto`.
+Los nombres no distinguen entre mayúsculas y minúsculas.
+
+**Ejemplos**
+
+Lista todos los proyectos y subproyectos:
+
+```sh
+$ todoister ls
+```
+
+Lista los proyectos `Trabajo` y `Vida` y sus subproyectos:
+
+```sh
+$ todoister ls Trabajo Vida
+```
+
+Lista todos los subproyectos de `Proyecto`, que es un subproyecto de `Trabajo`:
+
+```sh
+$ todoister ls Trabajo/Proyecto
+```
+
+### `tasks`, `items`
+
+```sh
+todoister tasks PROYECTO...
+```
+
+Lista las tareas de proyecto.
+
+`PROYECTO`... son los nombres de uno o más proyectos cuyas tareas se desean listar.
+
+Puede especificar un nombre de proyecto por su ruta completa, por ejemplo, `Trabajo/Proyecto`.
+Los nombres no distinguen entre mayúsculas y minúsculas.
+
+**Ejemplos**
+
+Lista las tareas para el proyecto `Vida`:
+
+```sh
+$ todoister tasks Vida
+```
+
+Lista las tareas para el subproyecto `Proyecto` del proyecto `Trabajo`:
+
+```sh
+$ todoister tasks Trabajo/Proyecto
+```
+
 
 ### `export`
 

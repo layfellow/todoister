@@ -6,16 +6,22 @@
 
 Todoister is a simple [Todoist](https://todoist.com/) CLI client written in Go.
 
-**This is an early release, with very reduced functionality.** For now, it can only export
-projects and tasks into a hierarchichal tree of JSON or YAML files.
+**This is an early release, with very reduced functionality.** Currenty implemented:
 
-I wrote it because I was dissatisfied with the only export option of Todoist being unstructured
+- `list`: list projects.
+- `tasks`: list project tasks.
+- `export`: export projects and tasks to JSON or YAML files.
+
+I wrote this because I wanted a simple and quick way to check my Todoist tasks and projects
+when working in the terminal.
+
+Also, I was dissatisfied with the only export option of Todoist being unstructured
 comma-separated values
 ([the horror, the horror](https://www.oxfordreference.com/display/10.1093/acref/9780199567454.001.0001/acref-9780199567454-e-931)),
-which lack the detail I need. Also, I wanted something cron-job-friendly for unattended
+which lack the detail I need. I wanted something cron-job-friendly for unattended
 backups, in a more manageable format, like JSON or YAML.
 
-More features like task management and project creation are on the horizon.
+*More features like task management, project creation, tag management, etc. coming soon.*
 
 ## Installation
 
@@ -28,8 +34,9 @@ $ curl -sfL https://layfellow.net/todoister/installer.sh | sh
 This script fetches the latest binary for your platform and installs it in `~/.local/bin` or
 `~/bin`.
 
-For Windows ... huh, I don’t have access to a Windows system to develop and test, so there are
-no releases for it, but the Linux binary should work under
+For Windows ... huh,
+[I don’t use Windows](https://www.fsf.org/news/lifes-better-together-when-you-avoid-windows-11),
+so there are no releases for it, but the Linux binary should work under
 [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/).
 
 Alternatively, if you have Go (version 1.22 or later), you can download, compile and install
@@ -63,6 +70,7 @@ $ todoister --token='your-todoist-API-token' command ...
 The `--token` option takes precedence over the environment variable, which in turn overrides the
 configuration file.
 
+
 ## Usage
 
 ```sh
@@ -75,6 +83,7 @@ todoister [OPTIONS] COMMAND
 - `-v`, `--version` Show version and exit
 - `-t`, `--token` Override the Todoist API token in the configuration file or environment variable
 
+
 ## COMMANDS
 
 ### `help`
@@ -84,6 +93,69 @@ todoister help [COMMAND]
 ```
 
 Show help message for `COMMAND` or general help if no `COMMAND` is provided.
+
+
+### `list`, `ls`
+
+```sh
+todoister ls [PROJECT]...
+```
+List projects and subprojects.
+
+`PROJECT`... are the names of one or more project or subproject names.
+If no `PROJECT` is given, all projects are listed.
+
+You can specify a project name by its full path, e.g., `Work/Project`.
+Names are case-insensitive.,
+
+**Examples**
+
+List all projects and subprojects:
+
+
+```sh
+$ todoister ls
+```
+
+List projects `Work` and `Life` and their subprojects:
+
+```sh
+$ todoister ls Work Life
+```
+
+List all subprojects of `Project`, which is a subproject of `Work`:
+
+```sh
+$ todoister ls Work/Project
+```
+
+### `tasks`, `items`
+
+```sh
+todoister tasks PROJECT...
+```
+
+List project tasks.
+
+`PROJECT`... are the names of one or more projects whose tasks to list.
+
+You can specify a project name by its full path, e.g., `Work/Project`.
+Names are case-insensitive.,
+
+**Examples**
+
+List tasks for project `Life`:
+
+```sh
+$ todoister tasks Life
+```
+
+List tasks for subproject `Project` of project `Work`:
+
+```sh
+$ todoister tasks Work/Project
+```
+
 
 ### `export`
 
