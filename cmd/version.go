@@ -9,7 +9,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Minimal Todoist CLI client v0.1")
+		fmt.Println(fmt.Sprintf("%s v%s", VersionText, Version))
 	},
 }
 

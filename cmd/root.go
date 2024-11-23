@@ -5,11 +5,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	VersionText = "Minimal Todoist CLI client"
+)
+
+var Version = "DEV"
+
 var ConfigValue util.ConfigType
 
 var rootCmd = &cobra.Command{
-	Use:   "todoister",
-	Short: "Minimal todoist CLI client",
+	Use:     "todoister",
+	Version: Version,
+	Short:   VersionText,
 }
 
 func initAll() {
@@ -19,7 +26,8 @@ func initAll() {
 
 func init() {
 	cobra.OnInitialize(initAll)
-	rootCmd.PersistentFlags().StringVarP(&ConfigValue.Token, "token", "t", "", "Override Todoist token.")
+	rootCmd.PersistentFlags().StringVarP(&ConfigValue.Token, "token", "t", "", "Override Todoist token")
+	rootCmd.SetVersionTemplate(`{{printf "` + VersionText + ` v%s\n" .Version }}`)
 }
 
 func Execute() {
