@@ -1,5 +1,7 @@
 package util
 
+import "strings"
+
 // TodoistData as returned by the API
 type TodoistData struct {
 	Projects     []TodoistProject     `json:"projects"`
@@ -161,10 +163,83 @@ type Duration struct {
 	Unit   string `json:"unit"`
 }
 
+// GetTasksByProjectID returns a slice of tasks for a given project ID.
+//   - projectID: the project ID
+//   - todoistData: pointer to TodoistData struct as returned by the API
+//
+// Returns a pointer to a slice of TodoistItem structs (aka Tasks).
+func GetTasksByProjectID(projectID string, todoistData *TodoistData) *[]TodoistItem {
+	tasks := make([]TodoistItem, 0)
+	for _, item := range todoistData.Items {
+		if item.ProjectID == projectID {
+			tasks = append(tasks, item)
+		}
+	}
+	return &tasks
+}
+
+// GetProjectIDByName returns the project ID for a given project name.
+//   - name: the project name
+//   - todoistData: pointer to TodoistData struct as returned by the API
+//
+// Returns the project ID as a string.
+func GetProjectIDByName(name string, todoistData *TodoistData) string {
+	for _, project := range todoistData.Projects {
+		if strings.ToLower(project.Name) == strings.ToLower(name) {
+			return project.ID
+		}
+	}
+	return ""
+}
+
+// GetProjectByPathName returns a project and its canonical pathname.
+//   - pathname: the project pathname as entered by the user
+//   - project: pointer to ExportedProject struct as parsed by HierarchicalData
+//
+// Returns the canonical pathname and a pointer to the projectʼs ExportedProject struct.
+func GetProjectByPathName(pathname string, project *ExportedProject) (string, *ExportedProject) {
+	var p *ExportedProject
+	var actualName, actualPathname string
+
+	root := project
+	names := strings.Split(pathname, "/")
+	for _, name := range names {
+		if actualName, p = GetProjectByName(name, root); p != nil {
+			root = p
+			actualPathname += actualName + "/"
+		}
+	}
+	// Trim the trailing slash
+	if len(actualPathname) > 0 {
+		actualPathname = actualPathname[:len(actualPathname)-1]
+	}
+	return actualPathname, p
+}
+
+// GetProjectByName returns a project by name.
+// - name: the project name as entered by the user
+// - project: pointer to ExportedProject struct as parsed by HierarchicalData
+//
+// Returns the canonical project name and a pointer to the projectʼs ExportedProject struct.
+func GetProjectByName(name string, project *ExportedProject) (string, *ExportedProject) {
+	if strings.ToLower(project.Name) == strings.ToLower(name) {
+		return project.Name, project
+	} else {
+		if project.Subprojects != nil {
+			for _, subproject := range project.Subprojects {
+				if actualName, p := GetProjectByName(name, subproject); p != nil {
+					return actualName, p
+				}
+			}
+		}
+	}
+	return "", nil
+}
+
 // HierarchicalData converts TodoistData to a hierarchical structure of Exported* structs.
 //   - todoistData: a pointer to a TodoistData struct
 //
-// Returns a slice of root ExportedProject references.
+// Returns a slice of root ExportedProject pointers.
 func HierarchicalData(todoistData *TodoistData) []*ExportedProject {
 	// Persistent variable to hold the root ExportedProject references.
 	var roots []*ExportedProject
