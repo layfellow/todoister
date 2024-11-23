@@ -16,6 +16,11 @@ const (
 //
 // Returns a pointer to a TodoistData struct with the data.
 func GetTodoistData(token string) *TodoistData {
+
+	if token == "" {
+		Die("Missing Todoist token", nil)
+	}
+
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", TodoistURL, nil)
 	if err != nil {

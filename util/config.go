@@ -60,9 +60,7 @@ func InitConfig(config *ConfigType) {
 
 	// Config.Token may have been set already by the -t, --token flag.
 	if config.Token == "" {
-		if config.Token = viper.GetString("token"); config.Token == "" {
-			Die("Missing Todoist token", nil)
-		}
+		config.Token = viper.GetString("token")
 	}
 	if config.Log.Name == "" {
 		config.Log.Name, _ = ExpandPath(viper.GetString("log.name"))
