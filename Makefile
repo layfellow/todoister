@@ -17,6 +17,9 @@ dependencies:
 	go get -u
 	go mod tidy
 
+doc:
+	go run doc/doc.go
+
 releases:
 	gh release create $(TAG) ./build/$(BIN)-linux-amd64 ./build/$(BIN)-darwin-amd64 ./build/$(BIN)-darwin-arm64
 
@@ -27,4 +30,4 @@ install:
 clean:
 	rm -rf build
 
-.PHONY: build lint dependencies releases install clean
+.PHONY: build lint dependencies doc releases install clean

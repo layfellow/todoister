@@ -13,10 +13,11 @@ var Version = "DEV"
 
 var ConfigValue util.ConfigType
 
-var rootCmd = &cobra.Command{
-	Use:     "todoister",
-	Version: Version,
-	Short:   VersionText,
+var RootCmd = &cobra.Command{
+	Use:               "todoister",
+	Version:           Version,
+	Short:             VersionText,
+	DisableAutoGenTag: true,
 }
 
 func initAll() {
@@ -26,10 +27,10 @@ func initAll() {
 
 func init() {
 	cobra.OnInitialize(initAll)
-	rootCmd.PersistentFlags().StringVarP(&ConfigValue.Token, "token", "t", "", "Override Todoist token")
-	rootCmd.SetVersionTemplate(`{{printf "` + VersionText + ` v%s\n" .Version }}`)
+	RootCmd.PersistentFlags().StringVarP(&ConfigValue.Token, "token", "t", "", "Override Todoist token")
+	RootCmd.SetVersionTemplate(`{{printf "` + VersionText + ` v%s\n" .Version }}`)
 }
 
 func Execute() {
-	_ = rootCmd.Execute()
+	_ = RootCmd.Execute()
 }
