@@ -23,16 +23,17 @@ var listCmd = &cobra.Command{
 	Use:     "list [project]...",
 	Aliases: []string{"ls", "projects"},
 	Short:   "List projects",
-	Long: `List projects and subprojects.
-
-  project... are the names of one or more project or subproject names to list.
-      If no project name is given, all projects are listed.
-      You can specify a project name by its full path, e.g., "Work/Project".
-      Names are case-insensitive.`,
-	Example: `  todoister ls
-  todoister ls Work Life
-  todoister ls Work/Project`,
-
+	Long: "List projects and subprojects.\n\n" +
+		"`project` is the name of one or more projects to list tasks from.\n" +
+		"If no `project` is given, all projects are listed.\n" +
+		"You can specify a project name by its full path, e.g., `Work/Project`.\n" +
+		"Names are case-insensitive.\n",
+	Example: "# List all projects and subprojects:\n" +
+		"todoister ls\n\n" +
+		"# List projects Work and Life and their subprojects:\n" +
+		"todoister ls Work Life\n\n" +
+		"# List all subprojects of Project, which is a subproject of Work:\n" +
+		"todoister ls Work/Project",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectData := util.HierarchicalData(util.GetTodoistData(ConfigValue.Token))
 		project := util.ExportedProject{Subprojects: projectData}
@@ -51,5 +52,6 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
+	listCmd.SetHelpFunc(util.CustomHelpFunc)
 	RootCmd.AddCommand(listCmd)
 }

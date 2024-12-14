@@ -13,24 +13,23 @@ var depth int
 var exportCmd = &cobra.Command{
 	Use:   "export [path]",
 	Short: "Export projects in JSON or YAML format",
-	Long: `Export all Todoist projects.
-
-  path is a file or directory where to export the projects, by default index.json
-       or index.yaml (if --yaml is specified) in the current directory.
-
-  -d, --depth N when provided, todoister will create directories up to N levels deep,
-       writing each subproject to a separate file.`,
-	Example: `  todoister export
-  todoister export ~/todoist.json
-  todoister export ~/todoist.yaml --yaml
-  todoister export ~/projects --json -d 3`,
+	Long: "Export all Todoist projects as a tree of JSON or YAML files.\n\n" +
+		"- `path` is a file or directory where to export the projects, by default `index.json`.\n",
+	Example: "# Export to a single index.json file in the current directory:\n" +
+		"todoister export\n\n" +
+		"# Export to todoist.json file in the home directory:\n" +
+		"todoister export ~/todoist.json\n\n" +
+		"# Export to todoist.yaml file in the home directory:\n" +
+		"todoister export ~/todoist.yaml --yaml\n\n" +
+		"# Export to a projects directory in the home, with subdirectories down to 3 levels deep:\n" +
+		"todoister export ~/projects --json -d 3",
 
 	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
 		useJSON = useJSON || strings.ToLower(ConfigValue.Export.Format) == "json"
 		useYAML = !useJSON && (useYAML || strings.ToLower(ConfigValue.Export.Format) == "yaml")
-		if depth == 0 {
+		if depth < 0 {
 			depth = ConfigValue.Export.Depth
 		}
 
@@ -57,11 +56,12 @@ var exportCmd = &cobra.Command{
 
 func init() {
 	exportCmd.Flags().BoolVar(&useJSON, "json", false,
-		"Export in JSON format (default)")
+		"export in JSON format (default)")
 	exportCmd.Flags().BoolVar(&useYAML, "yaml", false,
-		"Export in YAML format")
-	exportCmd.Flags().IntVarP(&depth, "depth", "d", 0,
-		"Depth of subdirectory tree when exporting (default 0, i.e., no subdirectories)")
+		"export in YAML format")
+	exportCmd.Flags().IntVarP(&depth, "depth", "d", -1,
+		"depth of subdirectory tree to create on the filesystem when exporting\n(default is 0, i.e., no subdirectories)")
+	exportCmd.SetHelpFunc(util.CustomHelpFunc)
 
-	rootCmd.AddCommand(exportCmd)
+	RootCmd.AddCommand(exportCmd)
 }
