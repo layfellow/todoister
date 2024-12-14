@@ -185,7 +185,7 @@ func GetTasksByProjectID(projectID string, todoistData *TodoistData) *[]TodoistI
 // Returns the project ID as a string.
 func GetProjectIDByName(name string, todoistData *TodoistData) string {
 	for _, project := range todoistData.Projects {
-		if strings.ToLower(project.Name) == strings.ToLower(name) {
+		if strings.EqualFold(project.Name, name) {
 			return project.ID
 		}
 	}
@@ -222,7 +222,7 @@ func GetProjectByPathName(pathname string, project *ExportedProject) (string, *E
 //
 // Returns the canonical project name and a pointer to the projectʼs ExportedProject struct.
 func GetProjectByName(name string, project *ExportedProject) (string, *ExportedProject) {
-	if strings.ToLower(project.Name) == strings.ToLower(name) {
+	if strings.EqualFold(project.Name, name) {
 		return project.Name, project
 	} else {
 		if project.Subprojects != nil {
