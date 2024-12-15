@@ -1,5 +1,5 @@
 BIN = todoister
-VERSION = 0.2.1
+VERSION = 0.2.2
 
 TAG = $(shell git describe --tags --always --abbrev=0)
 LDFLAGS= -ldflags="-X 'github.com/layfellow/todoister/cmd.Version=$(VERSION)'"
