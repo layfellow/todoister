@@ -18,8 +18,8 @@ const (
 
 // Deafult export paths.
 const (
-	DefaultExportPath = "index.json"
-	YAMLExportPath    = "index.yaml"
+	JSONExportPath = "index.json"
+	YAMLExportPath = "index.yaml"
 )
 
 // ExpandPath expands a path that starts with a tilde (~) or contains environment variables.
@@ -59,7 +59,7 @@ func normalizePathnames(path string, format ExportFormat) (string, string, error
 	// If the basename is empty or isnʼt a filename, use the default export path.
 	if basename == "." || !strings.Contains(basename, ".") {
 		dirname = expandedPath
-		basename = DefaultExportPath
+		basename = JSONExportPath
 		if format == YAML {
 			basename = YAMLExportPath
 		}
@@ -133,8 +133,8 @@ func writeProjectFile(path string, format ExportFormat, project *ExportedProject
 // - format: the export format (JSON or YAML)
 // - depth: the depth of the subdirectory tree
 // - project: a pointer to the project to write
-func writeProject(dirname string, basename string, format ExportFormat, depth int, project *ExportedProject) error {
-	if dirname != "" {
+func writeProject(dirname string, basename string, format ExportFormat, depth int, clear bool, project *ExportedProject) error {
+	if clear && dirname != "" {
 		if err := clearDirectory(dirname); err != nil {
 			Warn("Failed to clear directory", err)
 		}
@@ -151,7 +151,7 @@ func writeProject(dirname string, basename string, format ExportFormat, depth in
 		}
 		for _, subproject := range project.Subprojects {
 			// Recursively walk the subprojects.
-			err := writeProject(filepath.Join(dirname, subproject.Name), basename, format, depth-1, subproject)
+			err := writeProject(filepath.Join(dirname, subproject.Name), basename, format, depth-1, true, subproject)
 			if err != nil {
 				return err
 			}
@@ -167,12 +167,18 @@ func writeProject(dirname string, basename string, format ExportFormat, depth in
 // - path: the path to write to
 func WriteHierarchicalData(roots []*ExportedProject, format ExportFormat, depth int, path string) error {
 	dirname, basename, err := normalizePathnames(path, format)
+
+	// DEBUG
+	println("format: ", format)
+	println("dirname: ", dirname)
+	println("basename: ", basename)
+
 	if err != nil {
 		return err
 	}
 	project := ExportedProject{Subprojects: roots}
 	project.Name = "Projects"
-	if err := writeProject(dirname, basename, format, depth, &project); err != nil {
+	if err := writeProject(dirname, basename, format, depth, false, &project); err != nil {
 		return err
 	}
 	return nil

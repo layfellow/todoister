@@ -40,7 +40,7 @@ func InitConfig(config *ConfigType) {
 
 	viper.SetEnvPrefix("TODOIST")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
+	viper.AutomaticEnv() // Automagically bind environment variables to config file keys.
 	viper.SetConfigName(ConfigFile)
 	viper.SetConfigType(ConfigFileExt)
 
