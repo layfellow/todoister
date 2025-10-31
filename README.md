@@ -1,6 +1,6 @@
-# Minimal Todoist CLI client
+# CLI Client for Todoist
 
-![Todoister](icon.png)
+![](icon.png)
 
 [LÉAME en español](README.es.md)
 
@@ -71,12 +71,7 @@ The `--token` option takes precedence over the environment variable, which in tu
 configuration file.
 
 
-## Commands
-
-See the User’s Guide at https://layfellow.net/project/todoister/ for a complete reference
-of the implemented commands.
-
-## Running `export` as a cron job
+## Cron job
 
 You can run `todoister export` in a cron job as a way create automatic Todoist backups in a
 sane format. You can set the export options in the configuration file, so you don’t have
@@ -111,32 +106,7 @@ Logs follow the
 [structured logging](https://pkg.go.dev/log/slog) format and are auto-rotated.
 No logs are written in interactive mode.
 
-## For developers
 
-Todoister is written in Go (minimum version 1.22). It uses the
-[Cobra framework](https://cobra.dev/)
-for the CLI. Commands reside in `cmd`, utilities in `util`.
+## Commands
 
-I wrote a Makefile to assist with routine tasks.
-
-To update dependencies and update `go.mod` and `go.sum`:
-
-    $ make dependencies
-
-To run `golangci-lint` (requires [golangci-lint](https://golangci-lint.run/)):
-
-    $ make lint
-
-To build the binary for your platform:
-
-    $ make build
-
-To install the binary in your default path:
-
-    $ make install
-
-To create a new GitHub Release using the latest tag (requires [GitHub CLI](https://cli.github.com/)):
-
-    $ make releases
-
-Pull requests are welcome.
+See the User’s Guide at https://layfellow.net/project/todoister/ for a complete reference of the implemented commands.
