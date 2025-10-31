@@ -1,5 +1,9 @@
 # Para desarrolladores
 
+[CONTRIBUTING in English](CONTRIBUTING.md)
+
+Los *pull requests* son bienvenidos.
+
 Todoister está escrito en Go (versión mínima 1.22). Utiliza el
 [framework Cobra](https://cobra.dev/)
 para la CLI. Los comandos residen en `cmd`, las utilidades en `util`.
@@ -25,6 +29,3 @@ Para instalar el binario en su ruta predeterminada:
 Para crear un nuevo GitHub Release usando la última etiqueta (requiere [GitHub CLI](https://cli.github.com/)):
 
     $ make releases
-
-Los *pull requests* son bienvenidos.
-

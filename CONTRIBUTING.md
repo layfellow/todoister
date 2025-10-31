@@ -1,5 +1,7 @@
 # For developers
 
+[CONTRIBUCIONES en español](CONTRIBUTING.es.md)
+
 Pull requests are welcome.
 
 Todoister is written in Go (minimum version 1.22). It uses the
@@ -27,4 +29,3 @@ To install the binary in your default path:
 To create a new GitHub Release using the latest tag (requires [GitHub CLI](https://cli.github.com/)):
 
     $ make releases
-
