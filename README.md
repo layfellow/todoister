@@ -1,6 +1,6 @@
 # CLI Client for Todoist
 
-![](icon.png)
+![Todoister](icon.png)
 
 [LÉAME en español](README.es.md)
 
