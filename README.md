@@ -109,4 +109,4 @@ No logs are written in interactive mode.
 
 ## Commands
 
-See the User’s Guide at https://layfellow.net/project/todoister/ for a complete reference of the implemented commands.
+See the User’s Guide at https://layfellow.net//todoister/ for a complete reference of the implemented commands.

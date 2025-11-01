@@ -100,5 +100,5 @@ No se escriben registros en modo interactivo.
 
 ## Comandos
 
-Consulte la Guía del Usuario en https://parroquiano.net/project/todoister/ para una referencia completa de los comandos implementados.
+Consulte la Guía del Usuario en https://parroquiano.net/todoister/ para una referencia completa de los comandos implementados.
 
