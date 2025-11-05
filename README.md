@@ -1,6 +1,5 @@
-# CLI Client for Todoist
-
-![Todoister](icon.png)
+<h1 align="center">CLI Client for Todoist</h1>
+<p align="center"><img src="icon.svg" width="80" height="78" alt="Todoister"/></p>
 
 [LÉAME en español](README.es.md)
 
@@ -109,4 +108,4 @@ No logs are written in interactive mode.
 
 ## Commands
 
-See the User’s Guide at https://layfellow.net//todoister/ for a complete reference of the implemented commands.
+See the User’s Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.

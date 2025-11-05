@@ -1,6 +1,5 @@
-# Cliente CLI para Todoist
-
-![Todoister](icon.png)
+<h1 align="center">Cliente CLI para Todoist</h1>
+<p align="center"><img src="icon.svg" width="80" height="78" alt="Todoister"/></p>
 
 [README in English](README.md)
 
@@ -100,5 +99,5 @@ No se escriben registros en modo interactivo.
 
 ## Comandos
 
-Consulte la Guía del Usuario en https://parroquiano.net/todoister/ para una referencia completa de los comandos implementados.
+Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.
 
