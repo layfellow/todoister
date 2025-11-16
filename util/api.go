@@ -5,11 +5,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 const (
 	TodoistBaseURL = "https://api.todoist.com/api/v1"
 )
+
+// PaginatedResponse represents a paginated API response
+type PaginatedResponse struct {
+	Results    json.RawMessage `json:"results"`
+	NextCursor string          `json:"next_cursor"`
+}
 
 // makeRequest makes an HTTP GET request to the Todoist API.
 func makeRequest(token, endpoint string) ([]byte, error) {
@@ -45,6 +52,119 @@ func makeRequest(token, endpoint string) ([]byte, error) {
 	return body, nil
 }
 
+// getAllPaginated fetches all items from an endpoint, handling both paginated and non-paginated responses
+func getAllPaginated(token, endpoint string) ([]byte, error) {
+	body, err := makeRequest(token, endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	// Try to detect if this is a paginated response or a direct array
+	// Check if it starts with '[' (array) or '{' (object with pagination)
+	trimmed := strings.TrimSpace(string(body))
+	if len(trimmed) > 0 && trimmed[0] == '[' {
+		// Direct array response, no pagination
+		return body, nil
+	}
+
+	// Assume paginated response
+	var allResults []json.RawMessage
+	cursor := ""
+	maxPages := 100 // Safety limit to prevent infinite loops
+
+	for page := 0; page < maxPages; page++ {
+		url := endpoint
+		if cursor != "" {
+			separator := "?"
+			if strings.Contains(endpoint, "?") {
+				separator = "&"
+			}
+			url = fmt.Sprintf("%s%scursor=%s", endpoint, separator, cursor)
+		}
+
+		if cursor != "" {
+			// Fetch next page
+			body, err = makeRequest(token, url)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		var paginated PaginatedResponse
+		if err := json.Unmarshal(body, &paginated); err != nil {
+			// If we can't unmarshal as paginated, return what we have
+			if len(allResults) == 0 {
+				return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+			}
+			break
+		}
+
+		// Check if Results array actually contains items
+		var resultItems []json.RawMessage
+		if err := json.Unmarshal(paginated.Results, &resultItems); err != nil {
+			// Can't parse results as array
+			if len(allResults) == 0 {
+				return nil, fmt.Errorf("failed to unmarshal results array: %w", err)
+			}
+			break
+		}
+
+		if len(resultItems) > 0 {
+			allResults = append(allResults, paginated.Results)
+		} else {
+			// Empty results array, we're done
+			break
+		}
+
+		if paginated.NextCursor == "" || paginated.NextCursor == cursor {
+			// No more pages or cursor didn't change (safety check)
+			break
+		}
+		cursor = paginated.NextCursor
+	}
+
+	// Combine all results into a single array
+	if len(allResults) == 0 {
+		return []byte("[]"), nil
+	}
+	if len(allResults) == 1 {
+		return allResults[0], nil
+	}
+
+	// Merge multiple result arrays
+	var combined []json.RawMessage
+	for _, result := range allResults {
+		var items []json.RawMessage
+		if err := json.Unmarshal(result, &items); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal results array: %w", err)
+		}
+		combined = append(combined, items...)
+	}
+
+	return json.Marshal(combined)
+}
+
+// GetProjects retrieves only projects data from the Todoist API.
+// This is a lightweight alternative to GetTodoistData when only project information is needed.
+func GetProjects(token string) []TodoistProject {
+	if token == "" {
+		Die("Missing Todoist token", nil)
+	}
+
+	// Get all projects
+	body, err := getAllPaginated(token, "/projects")
+	if err != nil {
+		Die("Failed to get projects", err)
+	}
+
+	var projects []TodoistProject
+	if err := json.Unmarshal(body, &projects); err != nil {
+		Die("Failed to unmarshal projects", err)
+	}
+
+	return projects
+}
+
 // GetTodoistData retrieves data from the Todoist unified API v1.
 //   - token: the Todoist API token
 //
@@ -57,7 +177,7 @@ func GetTodoistData(token string) *TodoistData {
 	var todoistData TodoistData
 
 	// Get all projects
-	body, err := makeRequest(token, "/projects")
+	body, err := getAllPaginated(token, "/projects")
 	if err != nil {
 		Die("Failed to get projects", err)
 	}
@@ -66,7 +186,7 @@ func GetTodoistData(token string) *TodoistData {
 	}
 
 	// Get all sections
-	body, err = makeRequest(token, "/sections")
+	body, err = getAllPaginated(token, "/sections")
 	if err != nil {
 		Die("Failed to get sections", err)
 	}
@@ -75,7 +195,7 @@ func GetTodoistData(token string) *TodoistData {
 	}
 
 	// Get all tasks
-	body, err = makeRequest(token, "/tasks")
+	body, err = getAllPaginated(token, "/tasks")
 	if err != nil {
 		Die("Failed to get tasks", err)
 	}
@@ -84,7 +204,7 @@ func GetTodoistData(token string) *TodoistData {
 	}
 
 	// Get all labels
-	body, err = makeRequest(token, "/labels")
+	body, err = getAllPaginated(token, "/labels")
 	if err != nil {
 		Die("Failed to get labels", err)
 	}
@@ -96,7 +216,7 @@ func GetTodoistData(token string) *TodoistData {
 	// We need to get comments for all projects
 	todoistData.Comments = make([]TodoistComment, 0)
 	for _, project := range todoistData.Projects {
-		body, err = makeRequest(token, fmt.Sprintf("/comments?project_id=%s", project.ID))
+		body, err = getAllPaginated(token, fmt.Sprintf("/comments?project_id=%s", project.ID))
 		if err != nil {
 			Warn(fmt.Sprintf("Failed to get comments for project %s", project.ID), err)
 			continue

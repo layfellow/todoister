@@ -160,6 +160,38 @@ func GetProjectIDByName(name string, todoistData *TodoistData) string {
 	return ""
 }
 
+// GetProjectIDByPathFromProjects returns the Todoist project ID for a given project path using only projects data.
+// This is a lightweight alternative to GetProjectIDByPath that doesn't require the full TodoistData structure.
+//   - pathname: the project pathname as entered by the user (e.g., "Work/Reports")
+//   - projects: slice of TodoistProject structs
+//
+// Returns the project ID as a string, or empty string if not found.
+func GetProjectIDByPathFromProjects(pathname string, projects []TodoistProject) string {
+	names := strings.Split(pathname, "/")
+	var currentParentID string
+
+	for i, name := range names {
+		found := false
+		for _, proj := range projects {
+			// Match by name and parent_id to ensure we traverse the correct path
+			if strings.EqualFold(proj.Name, name) && proj.ParentID == currentParentID {
+				currentParentID = proj.ID
+				found = true
+				// If this is the last name in the path, we've found our project
+				if i == len(names)-1 {
+					return proj.ID
+				}
+				break
+			}
+		}
+		if !found {
+			return ""
+		}
+	}
+
+	return ""
+}
+
 // GetProjectByPathName returns a project and its canonical pathname.
 //   - pathname: the project pathname as entered by the user
 //   - project: pointer to ExportedProject struct as parsed by HierarchicalData
@@ -182,6 +214,51 @@ func GetProjectByPathName(pathname string, project *ExportedProject) (string, *E
 		actualPathname = actualPathname[:len(actualPathname)-1]
 	}
 	return actualPathname, p
+}
+
+// GetProjectIDByPath returns the Todoist project ID for a given project path.
+//   - pathname: the project pathname as entered by the user (e.g., "Work/Reports")
+//   - todoistData: pointer to TodoistData struct
+//
+// Returns the project ID as a string, or empty string if not found.
+func GetProjectIDByPath(pathname string, todoistData *TodoistData) (string, string) {
+	// Build hierarchical structure
+	hierarchicalData := HierarchicalData(todoistData)
+	root := ExportedProject{Subprojects: hierarchicalData}
+	root.Name = "Projects"
+
+	// Find the project in the hierarchy
+	actualPathname, exportedProject := GetProjectByPathName(pathname, &root)
+	if exportedProject == nil {
+		return "", ""
+	}
+
+	// Now find the corresponding TodoistProject by matching the name
+	// We need to search through the hierarchy to find the right one
+	// Build a path through the hierarchy to ensure we get the correct project
+	names := strings.Split(pathname, "/")
+	var currentParentID string
+
+	for i, name := range names {
+		found := false
+		for _, proj := range todoistData.Projects {
+			// Match by name and parent_id to ensure we traverse the correct path
+			if strings.EqualFold(proj.Name, name) && proj.ParentID == currentParentID {
+				currentParentID = proj.ID
+				found = true
+				// If this is the last name in the path, we've found our project
+				if i == len(names)-1 {
+					return proj.ID, actualPathname
+				}
+				break
+			}
+		}
+		if !found {
+			return "", ""
+		}
+	}
+
+	return "", ""
 }
 
 // GetProjectByName returns a project by name.
