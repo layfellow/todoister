@@ -13,6 +13,9 @@ build:
 lint:
 	golangci-lint run
 
+test:
+	VERSION=$(VERSION) go test -count=1 ./cmd
+
 dependencies:
 	go get -u
 	go mod tidy
@@ -30,4 +33,4 @@ install:
 clean:
 	rm -rf build
 
-.PHONY: build lint dependencies doc releases install clean
+.PHONY: build lint test dependencies doc releases install clean

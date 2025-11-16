@@ -2,15 +2,13 @@ package util
 
 import "strings"
 
-// TodoistData as returned by the API
+// TodoistData as returned by the unified API v1
 type TodoistData struct {
-	Projects     []TodoistProject     `json:"projects"`
-	Sections     []TodoistSection     `json:"sections"`
-	Items        []TodoistItem        `json:"items"`
-	Labels       []TodoistLabel       `json:"labels"`
-	Notes        []TodoistNote        `json:"notes"`
-	ProjectNotes []TodoistProjectNote `json:"project_notes"`
-	Reminders    []TodoistReminder    `json:"reminders"`
+	Projects []TodoistProject `json:"projects"`
+	Sections []TodoistSection `json:"sections"`
+	Items    []TodoistItem    `json:"items"`
+	Labels   []TodoistLabel   `json:"labels"`
+	Comments []TodoistComment `json:"comments"`
 }
 
 // Projects
@@ -23,10 +21,8 @@ type Project struct {
 
 type TodoistProject struct {
 	Project
-	ID         string `json:"v2_id"`
-	ParentID   string `json:"v2_parent_id"`
-	IsArchived bool   `json:"is_archived"`
-	IsDeleted  bool   `json:"is_deleted"`
+	ID       string `json:"id"`
+	ParentID string `json:"parent_id"`
 }
 
 type ExportedProject struct {
@@ -46,9 +42,9 @@ type Section struct {
 
 type TodoistSection struct {
 	Section
-	ID           string `json:"v2_id"`
-	ProjectID    string `json:"v2_project_id"`
-	SectionOrder int    `json:"section_order"`
+	ID        string `json:"id"`
+	ProjectID string `json:"project_id"`
+	Order     int    `json:"order"`
 }
 
 type ExportedSection struct {
@@ -69,21 +65,20 @@ type Task struct {
 
 type TodoistItem struct {
 	Task
-	ID        string   `json:"v2_id"`
-	ProjectID string   `json:"v2_project_id"`
-	SectionID string   `json:"v2_section_id"`
-	Labels    []string `json:"labels"`
-	Duration  Duration `json:"duration"`
-	Due       Due      `json:"due"`
+	ID        string    `json:"id"`
+	ProjectID string    `json:"project_id"`
+	SectionID string    `json:"section_id"`
+	Labels    []string  `json:"labels"`
+	Duration  *Duration `json:"duration"`
+	Due       *Due      `json:"due"`
 }
 
 type ExportedTask struct {
 	Task
-	Labeled   []*ExportedLabel    `json:"labeled"`
-	Comments  []*ExportedComment  `json:"comments"`
-	Reminders []*ExportedReminder `json:"reminders"`
-	Duration  *Duration           `json:"duration"`
-	Due       *Due                `json:"due"`
+	Labeled  []*ExportedLabel   `json:"labeled"`
+	Comments []*ExportedComment `json:"comments"`
+	Duration *Duration          `json:"duration"`
+	Due      *Due               `json:"due"`
 }
 
 // Labels
@@ -95,55 +90,28 @@ type Label struct {
 
 type TodoistLabel struct {
 	Label
-	ID        string `json:"id"`
-	IsDeleted bool   `json:"is_deleted"`
+	ID string `json:"id"`
 }
 
 type ExportedLabel struct {
 	Label
 }
 
-// Comments (aka Notes)
+// Comments
 
 type Comment struct {
-	Content   string `json:"content"`
-	IsDeleted bool   `json:"is_deleted"`
+	Content string `json:"content"`
 }
 
-type TodoistNote struct {
+type TodoistComment struct {
 	Comment
-	ID        string `json:"v2_id"`
-	ItemID    string `json:"v2_item_id"`
-	ProjectID string `json:"v2_project_id"`
-}
-
-type TodoistProjectNote struct {
-	Comment
-	ID        string `json:"v2_id"`
-	ProjectID string `json:"v2_project_id"`
+	ID        string `json:"id"`
+	TaskID    string `json:"task_id"`
+	ProjectID string `json:"project_id"`
 }
 
 type ExportedComment struct {
 	Comment
-}
-
-// Reminders
-
-type Reminder struct {
-	Type      string `json:"type"`
-	IsDeleted bool   `json:"is_deleted"`
-}
-
-type TodoistReminder struct {
-	Reminder
-	ID     string `json:"v2_id"`
-	ItemID string `json:"v2_item_id"`
-	Due    Due    `json:"due"`
-}
-
-type ExportedReminder struct {
-	Reminder
-	Due *Due `json:"due"`
 }
 
 // Due dates
@@ -151,8 +119,8 @@ type ExportedReminder struct {
 type Due struct {
 	Date        string `json:"date"`
 	IsRecurring bool   `json:"is_recurring"`
-	Lang        string `json:"lang"`
 	String      string `json:"string"`
+	Datetime    string `json:"datetime"`
 	Timezone    string `json:"timezone"`
 }
 
@@ -302,18 +270,19 @@ func HierarchicalData(todoistData *TodoistData) []*ExportedProject {
 		t := new(ExportedTask)
 		t.Task = item.Task // Copy common fields from TodoistItem to ExportedTask
 
-		if item.Duration.Amount > 0 {
+		if item.Duration != nil && item.Duration.Amount > 0 {
 			t.Duration = new(Duration)
 			// Copy common fields from duration to ExportedTask.
-			*t.Duration = item.Duration
+			*t.Duration = *item.Duration
 		}
-		if item.Due.Date != "" {
+		if item.Due != nil && item.Due.Date != "" {
 			t.Due = new(Due)
 			// Copy common fields from due date to ExportedTask.
-			*t.Due = item.Due
+			*t.Due = *item.Due
 		}
 
 		t.Labeled = make([]*ExportedLabel, 0)
+		t.Comments = make([]*ExportedComment, 0)
 		taskMap[item.ID] = t
 	}
 
@@ -352,67 +321,32 @@ func HierarchicalData(todoistData *TodoistData) []*ExportedProject {
 		}
 	}
 
-	todoistNotes := todoistData.Notes
+	todoistComments := todoistData.Comments
 
-	// Map to hold references to each note (comment) by ID for easy lookup.
+	// Map to hold references to each comment by ID for easy lookup.
 	var commentMap = make(map[string]*ExportedComment)
 
 	// Initialize commentMap with common Comment fields.
-	for _, note := range todoistNotes {
+	for _, comment := range todoistComments {
 		c := new(ExportedComment)
-		// Copy common fields from TodoistNote to ExportedComment
-		c.Comment = note.Comment
-		commentMap[note.ID] = c
+		// Copy common fields from TodoistComment to ExportedComment
+		c.Comment = comment.Comment
+		commentMap[comment.ID] = c
 	}
 
-	// Add to the hierarchy by linking Comments to their respective Tasks.
-	for _, note := range todoistNotes {
-		taskMap[note.ItemID].Comments =
-			append(taskMap[note.ItemID].Comments, commentMap[note.ID])
-	}
-
-	todoistProjectNotes := todoistData.ProjectNotes
-
-	// Map to hold references to each project note (comment) by ID for easy lookup.
-	var projectCommentMap = make(map[string]*ExportedComment)
-
-	// Initialize projectCommentMap with common Comment fields.
-	for _, note := range todoistProjectNotes {
-		c := new(ExportedComment)
-		// Copy common fields from TodoistProjectNote to ExportedComment
-		c.Comment = note.Comment
-		projectCommentMap[note.ID] = c
-	}
-
-	// Add to the hierarchy by linking Comments to their respective Projects.
-	for _, note := range todoistProjectNotes {
-		projectMap[note.ProjectID].Comments =
-			append(projectMap[note.ProjectID].Comments, projectCommentMap[note.ID])
-	}
-
-	todoistReminders := todoistData.Reminders
-
-	// Map to hold references to each reminder by ID for easy lookup.
-	var reminderMap = make(map[string]*ExportedReminder)
-
-	// Initialize reminderMap with common Reminder fields.
-	for _, reminder := range todoistReminders {
-		r := new(ExportedReminder)
-		// Copy common fields from TodoistReminder to ExportedReminder
-		r.Reminder = reminder.Reminder
-
-		if reminder.Due.Date != "" {
-			r.Due = new(Due)
-			// Copy common fields from due date to ExportedReminder
-			*r.Due = reminder.Due
+	// Add to the hierarchy by linking Comments to their respective Tasks or Projects.
+	for _, comment := range todoistComments {
+		if comment.TaskID != "" {
+			// Task comment
+			if task, exists := taskMap[comment.TaskID]; exists {
+				task.Comments = append(task.Comments, commentMap[comment.ID])
+			}
+		} else if comment.ProjectID != "" {
+			// Project comment
+			if project, exists := projectMap[comment.ProjectID]; exists {
+				project.Comments = append(project.Comments, commentMap[comment.ID])
+			}
 		}
-		reminderMap[reminder.ID] = r
-	}
-
-	// Add to the hierarchy by linking Reminders to their respective Tasks.
-	for _, reminder := range todoistReminders {
-		taskMap[reminder.ItemID].Reminders =
-			append(taskMap[reminder.ItemID].Reminders, reminderMap[reminder.ID])
 	}
 
 	return roots

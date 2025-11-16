@@ -8,35 +8,24 @@ import (
 )
 
 const (
-	TodoistURL = "https://api.todoist.com/sync/v9/sync"
+	TodoistBaseURL = "https://api.todoist.com/api/v1"
 )
 
-// GetTodoistData retrieves data from the Todoist API.
-//   - token: the Todoist API token
-//
-// Returns a pointer to a TodoistData struct with the data.
-func GetTodoistData(token string) *TodoistData {
-
-	if token == "" {
-		Die("Missing Todoist token", nil)
-	}
-
+// makeRequest makes an HTTP GET request to the Todoist API.
+func makeRequest(token, endpoint string) ([]byte, error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", TodoistURL, nil)
+	url := fmt.Sprintf("%s%s", TodoistBaseURL, endpoint)
+
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		Die("Failed to create request", err)
+		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	req.Header.Set("Content-Type", "application/json")
-
-	q := req.URL.Query()
-	q.Add("resource_types", `["projects", "sections", "items", "labels", "notes", "reminders"]`)
-	req.URL.RawQuery = q.Encode()
 
 	resp, err := client.Do(req)
 	if err != nil {
-		Die("Failed to make request", err)
+		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
@@ -45,17 +34,80 @@ func GetTodoistData(token string) *TodoistData {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		Die(fmt.Sprintf("Unexpected status code %d", resp.StatusCode), nil)
+		return nil, fmt.Errorf("unexpected status code %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		Die("Failed to read response body", err)
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	return body, nil
+}
+
+// GetTodoistData retrieves data from the Todoist unified API v1.
+//   - token: the Todoist API token
+//
+// Returns a pointer to a TodoistData struct with the data.
+func GetTodoistData(token string) *TodoistData {
+	if token == "" {
+		Die("Missing Todoist token", nil)
 	}
 
 	var todoistData TodoistData
-	if err := json.Unmarshal(body, &todoistData); err != nil {
-		Die("Failed to unmarshal JSON", err)
+
+	// Get all projects
+	body, err := makeRequest(token, "/projects")
+	if err != nil {
+		Die("Failed to get projects", err)
 	}
+	if err := json.Unmarshal(body, &todoistData.Projects); err != nil {
+		Die("Failed to unmarshal projects", err)
+	}
+
+	// Get all sections
+	body, err = makeRequest(token, "/sections")
+	if err != nil {
+		Die("Failed to get sections", err)
+	}
+	if err := json.Unmarshal(body, &todoistData.Sections); err != nil {
+		Die("Failed to unmarshal sections", err)
+	}
+
+	// Get all tasks
+	body, err = makeRequest(token, "/tasks")
+	if err != nil {
+		Die("Failed to get tasks", err)
+	}
+	if err := json.Unmarshal(body, &todoistData.Items); err != nil {
+		Die("Failed to unmarshal tasks", err)
+	}
+
+	// Get all labels
+	body, err = makeRequest(token, "/labels")
+	if err != nil {
+		Die("Failed to get labels", err)
+	}
+	if err := json.Unmarshal(body, &todoistData.Labels); err != nil {
+		Die("Failed to unmarshal labels", err)
+	}
+
+	// Get all comments (both task and project comments)
+	// We need to get comments for all projects
+	todoistData.Comments = make([]TodoistComment, 0)
+	for _, project := range todoistData.Projects {
+		body, err = makeRequest(token, fmt.Sprintf("/comments?project_id=%s", project.ID))
+		if err != nil {
+			Warn(fmt.Sprintf("Failed to get comments for project %s", project.ID), err)
+			continue
+		}
+		var projectComments []TodoistComment
+		if err := json.Unmarshal(body, &projectComments); err != nil {
+			Warn(fmt.Sprintf("Failed to unmarshal comments for project %s", project.ID), err)
+			continue
+		}
+		todoistData.Comments = append(todoistData.Comments, projectComments...)
+	}
+
 	return &todoistData
 }
