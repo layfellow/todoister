@@ -11,7 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var projectColor string
+var (
+	projectColor string
+	projectFlag  string
+)
 
 // validColors are the allowed color values for projects
 var validColors = map[string]bool{
@@ -164,10 +167,107 @@ var addProjectCmd = &cobra.Command{
 	},
 }
 
+var addTaskCmd = &cobra.Command{
+	Use:   "task [flags] [PROJECT_PATH] TASK_TITLE",
+	Short: "Add a new task to a project",
+	Long: "Add a new task to a Todoist project.\n\n" +
+		"Usage formats:\n" +
+		"  todoister add task '#[PARENT PROJECT/]PROJECT NAME' 'TASK TITLE'\n" +
+		"  todoister add task -p '[PARENT PROJECT/]PROJECT NAME' 'TASK TITLE'\n" +
+		"  todoister add task --project '[PARENT PROJECT/]PROJECT NAME' 'TASK TITLE'\n\n" +
+		"Examples:\n" +
+		"  # Add task to root-level project:\n" +
+		"  todoister add task '#Work' 'Complete report'\n\n" +
+		"  # Add task to nested project:\n" +
+		"  todoister add task '#Work/Reports' 'Create quarterly report'\n\n" +
+		"  # Add task using project flag:\n" +
+		"  todoister add task -p 'Personal' 'Buy groceries'\n\n" +
+		"  # Add task to nested project using flag:\n" +
+		"  todoister add task --project 'Personal/Shopping' 'Buy milk'",
+	Args: func(cmd *cobra.Command, args []string) error {
+		// Handle both argument formats
+		if projectFlag != "" {
+			// Using -p/--project flag: expect exactly 1 argument (task title)
+			if len(args) != 1 {
+				return fmt.Errorf("when using --project flag, only TASK_TITLE is required")
+			}
+		} else {
+			// Not using flag: expect exactly 2 arguments (project path and task title)
+			if len(args) != 2 {
+				return fmt.Errorf("expected PROJECT_PATH and TASK_TITLE, or use --project flag")
+			}
+		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		var projectPath, taskTitle string
+
+		if projectFlag != "" {
+			// Using project flag
+			projectPath = projectFlag
+			taskTitle = args[0]
+		} else {
+			// Using positional arguments
+			projectPath = args[0]
+			taskTitle = args[1]
+
+			// Remove leading # if present
+			if strings.HasPrefix(projectPath, "#") {
+				projectPath = projectPath[1:]
+			}
+		}
+
+		// Parse the project path to extract parent and project name
+		parts := strings.Split(projectPath, "/")
+		projectName := parts[len(parts)-1]
+		var parentPath string
+		var projectID string
+
+		// If there are parent parts, we need to find the parent project ID
+		if len(parts) > 1 {
+			parentPath = strings.Join(parts[:len(parts)-1], "/")
+
+			// Fetch only projects and find the project ID (lightweight operation)
+			projects := util.GetProjects(ConfigValue.Token)
+			projectID = util.GetProjectIDByPathFromProjects(projectPath, projects)
+
+			if projectID == "" {
+				util.Die(fmt.Sprintf("Project '%s' not found", projectPath), nil)
+			}
+		} else {
+			// Single project name - find it by name
+			projects := util.GetProjects(ConfigValue.Token)
+			for _, proj := range projects {
+				if strings.EqualFold(proj.Name, projectName) && proj.ParentID == "" {
+					projectID = proj.ID
+					break
+				}
+			}
+
+			if projectID == "" {
+				util.Die(fmt.Sprintf("Root-level project '%s' not found", projectName), nil)
+			}
+		}
+
+		// Create the task
+		task, err := util.CreateTask(ConfigValue.Token, taskTitle, projectID)
+		if err != nil {
+			util.Die("Failed to create task", err)
+		}
+
+		// Print success message
+		if parentPath != "" {
+			fmt.Printf("Created task '%s' in '%s/%s' (ID: %s)\n", task.Content, parentPath, projectName, task.ID)
+		} else {
+			fmt.Printf("Created task '%s' in '%s' (ID: %s)\n", task.Content, projectName, task.ID)
+		}
+	},
+}
+
 var addCmd = &cobra.Command{
 	Use:   "add <resource> [arguments]",
 	Short: "Add a new resource",
-	Long:  "Add a new resource to Todoist (currently supports: project).\n",
+	Long:  "Add a new resource to Todoist (currently supports: project, task).\n",
 }
 
 func init() {
@@ -175,7 +275,12 @@ func init() {
 		"project color (berry_red, red, orange, yellow, olive_green, lime_green, green, mint_green, teal, sky_blue, light_blue, blue, grape, violet, lavender, magenta, salmon, charcoal, grey, taupe)")
 	addProjectCmd.SetHelpFunc(util.CustomHelpFunc)
 
+	addTaskCmd.Flags().StringVarP(&projectFlag, "project", "p", "",
+		"project name or path (e.g., 'Work' or 'Work/Reports')")
+	addTaskCmd.SetHelpFunc(util.CustomHelpFunc)
+
 	addCmd.AddCommand(addProjectCmd)
+	addCmd.AddCommand(addTaskCmd)
 	addCmd.SetHelpFunc(util.CustomHelpFunc)
 
 	RootCmd.AddCommand(addCmd)

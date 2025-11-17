@@ -231,3 +231,68 @@ func GetTodoistData(token string) *TodoistData {
 
 	return &todoistData
 }
+
+
+// TaskResponse represents a task creation response from the API
+type TaskResponse struct {
+	ID        string `json:"id"`
+	Content   string `json:"content"`
+	ProjectID string `json:"project_id"`
+}
+
+// TaskCreateRequest represents the request body for creating a task via REST API
+type TaskCreateRequest struct {
+	Content   string `json:"content"`
+	ProjectID string `json:"project_id,omitempty"`
+}
+
+// createTask makes a POST request to create a new task using the REST API v1
+func CreateTask(token, content, projectID string) (*TaskResponse, error) {
+	client := &http.Client{}
+
+	reqBody := TaskCreateRequest{
+		Content:   content,
+		ProjectID: projectID,
+	}
+
+	bodyBytes, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	url := fmt.Sprintf("%s/tasks", TodoistBaseURL)
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(bodyBytes)))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make request: %w", err)
+	}
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			Warn("Failed to close response body", cerr)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(body))
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	var task TaskResponse
+	if err := json.Unmarshal(body, &task); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	return &task, nil
+}

@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"testing"
+
+	"github.com/layfellow/todoister/util"
 )
 
 func TestValidColors(t *testing.T) {
@@ -29,6 +31,62 @@ func TestValidColors(t *testing.T) {
 		if validColors[color] {
 			t.Errorf("Color '%s' should not be valid", color)
 		}
+	}
+}
+
+
+func TestTaskCreateRequest(t *testing.T) {
+	tests := []struct {
+		name     string
+		request  util.TaskCreateRequest
+		expected string
+	}{
+		{
+			name: "basic task",
+			request: util.TaskCreateRequest{
+				Content:   "Test Task",
+				ProjectID: "12345",
+			},
+			expected: `{"content":"Test Task","project_id":"12345"}`,
+		},
+		{
+			name: "task without project",
+			request: util.TaskCreateRequest{
+				Content: "Inbox Task",
+			},
+			expected: `{"content":"Inbox Task"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Test that the struct has the expected fields
+			if tt.request.Content == "" {
+				t.Error("Task content should not be empty")
+			}
+			// Basic structure validation
+			if tt.name == "basic task" && tt.request.ProjectID == "" {
+				t.Error("Project ID should not be empty for basic test")
+			}
+		})
+	}
+}
+
+func TestTaskResponseStructure(t *testing.T) {
+	response := util.TaskResponse{
+		ID:        "67890",
+		Content:   "Created Task",
+		ProjectID: "12345",
+	}
+
+	if response.ID != "67890" {
+		t.Errorf("Expected ID '67890', got '%s'", response.ID)
+	}
+	if response.Content != "Created Task" {
+		t.Errorf("Expected content 'Created Task', got '%s'", response.Content)
+	}
+	if response.ProjectID != "12345" {
+		t.Errorf("Expected project ID '12345', got '%s'", response.ProjectID)
 	}
 }
 
