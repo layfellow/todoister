@@ -35,6 +35,7 @@ var reorderCommands = []string{
 	"version",
 	"list",
 	"tasks",
+	"add",
 	"export",
 }
 
@@ -120,16 +121,16 @@ func CustomGenMarkdown(cmd *cobra.Command, w io.Writer) error {
 		children := cmd.Commands()
 
 		// HACK Reorder command list to match the order in the published documentation
-		reorderedChildren := make([]*cobra.Command, len(children))
-		for i, n := range reorderCommands {
+		reorderedChildren := make([]*cobra.Command, 0, len(children))
+		for _, n := range reorderCommands {
 			j := slices.IndexFunc(children, func(c *cobra.Command) bool { return c.Name() == n })
 			if j > -1 {
-				reorderedChildren[i] = children[j]
+				reorderedChildren = append(reorderedChildren, children[j])
 			}
 		}
 
 		for _, child := range reorderedChildren {
-			if !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() {
+			if child == nil || !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() {
 				continue
 			}
 			cname := name + " " + child.Name()
