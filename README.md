@@ -5,13 +5,15 @@
 
 Todoister is a simple [Todoist](https://todoist.com/) CLI client written in Go.
 
-**This is an early release, with very reduced functionality.** Currenty implemented:
+**Current features:**
 
-- `list`: list projects.
-- `tasks`: list project tasks.
-- `export`: export projects and tasks to JSON or YAML files.
+- `list`: list projects in a hierarchical view.
+- `tasks`: list tasks within projects.
+- `add project`: create new projects (with optional color and parent hierarchy).
+- `add task`: create new tasks in existing projects with flexible syntax.
+- `export`: export projects and tasks to JSON or YAML with hierarchical structure.
 
-I wrote this because I wanted a simple and quick way to check my Todoist tasks and projects
+I wrote this because I wanted a simple and quick way to manage my Todoist tasks and projects
 when working in the terminal.
 
 Also, I was dissatisfied with the only export option of Todoist being unstructured
@@ -20,7 +22,7 @@ comma-separated values
 which lack the detail I need. I wanted something cron-job-friendly for unattended
 backups, in a more manageable format, like JSON or YAML.
 
-*More features like task management, project creation, tag management, etc. coming soon.*
+*More features like task editing, tag management, etc. coming soon.*
 
 ## Installation
 
@@ -108,4 +110,38 @@ No logs are written in interactive mode.
 
 ## Commands
 
-See the User’s Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.
+See the User's Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.
+
+### Basic Usage Examples
+
+```sh
+# List all projects
+todoister list
+
+# List tasks in a project
+todoister tasks ProjectName
+
+# Create a new project
+todoister add project "New Project"
+
+# Create a colored project
+todoister add project --color=blue "Important Stuff"
+
+# Create a nested project
+todoister add project "Work/Reports"
+
+# Add a task to a project
+todoister add task -p "Work" "Complete the report"
+
+# Add a task to a nested project
+todoister add task -p "Work/Reports" "Create quarterly summary"
+
+# Alternative syntax for adding tasks
+todoister add task "#Personal" "Buy groceries"
+
+# Export to JSON
+todoister export ~/backup.json
+
+# Export to YAML with nested directory structure
+todoister export ~/backup --yaml -d 3
+```
