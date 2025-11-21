@@ -1,22 +1,22 @@
 ## todoister list
 
 ```sh
-todoister list [project]... [flags]
+todoister list [flags] [NAME]...
 ```
 
-Lista proyectos y subproyectos.
+Listar proyectos y subproyectos.
 
-`project` es el nombre de uno o más proyectos de los cuales listar tareas.
-Si no se proporciona `project`, se listarán todos los proyectos.
-Puede especificar un nombre de proyecto por su ruta completa, por ejemplo, `Work/Project`.
+`NAME` es el nombre de uno o más proyectos de los cuales listar tareas.
+Si no se proporciona `NAME`, se listan todos los proyectos.
+Puede especificar el nombre de un proyecto por su ruta completa, por ejemplo, `Work/Project`.
 Los nombres no distinguen entre mayúsculas y minúsculas.
 
 
-### Opciones Globales
+### Flags globales:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
-  <dd>utilizar <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
+  <dd>usa <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
 </dl>
 
 ### Ejemplos

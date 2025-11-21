@@ -1,21 +1,21 @@
 ## todoister tasks
 
 ```sh
-todoister tasks project... [flags]
+todoister tasks [flags] NAME...
 ```
 
-Listar tareas del proyecto.
+Lista las tareas de un proyecto.
 
-`project` es el nombre de uno o más proyectos de los cuales listar tareas.
-Puede especificar un nombre de proyecto por su ruta completa, por ejemplo, `Work/Project`.
+`NAME` es el nombre de uno o más proyectos de los cuales listar tareas.
+Puede especificar el nombre de un proyecto por su ruta completa, ej., `Work/Project`.
 Los nombres no distinguen entre mayúsculas y minúsculas.
 
 
-### Opciones Globales
+### Flags globales:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
-  <dd>usar <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
+  <dd>usa <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
 </dl>
 
 ### Ejemplos
@@ -26,4 +26,7 @@ todoister tasks Life
 
 # Listar tareas para el subproyecto Project del proyecto Work:
 todoister tasks Work/Project
+
+# Listar tareas para ambos proyectos:
+todoister tasks Life Work/Project
 ```

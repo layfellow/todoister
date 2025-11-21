@@ -1,14 +1,15 @@
 ## todoister export
 
 ```sh
-todoister export [path] [flags]
+todoister export [flags] [PATH]
 ```
 
-Exporte todos los proyectos de Todoist como un árbol de archivos JSON o YAML.
+Exporta todos los proyectos de Todoist como un árbol de archivos JSON o YAML.
 
-- `path` es un archivo o directorio donde exportar los proyectos, por defecto `index.json`.
+- `PATH` es un archivo o directorio donde exportar los proyectos, por defecto `index.json`.
 
-### Opciones
+
+### Flags:
 
 <dl>
   <dt><code>-d</code>, <code>--depth</code> <code>&lt;int&gt;</code></dt>
@@ -20,25 +21,25 @@ Exporte todos los proyectos de Todoist como un árbol de archivos JSON o YAML.
   <dd>exportar en formato YAML</dd>
 </dl>
 
-### Opciones Globales
+### Flags globales:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
-  <dd>utilizar <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
+  <dd>usar <code>&lt;string&gt;</code> como token de API de Todoist</dd>
 </dl>
 
 ### Ejemplos
 
 ```sh
-# Exportar a un único archivo index.json en el directorio actual:
+# Export to a single index.json file in the current directory:
 todoister export
 
-# Exportar a un archivo todoist.json en el directorio de inicio:
+# Export to todoist.json file in the home directory:
 todoister export ~/todoist.json
 
-# Exportar a un archivo todoist.yaml en el directorio de inicio:
-todoister export ~/todoist.yaml --yaml
+# Export to todoist.yaml file in the home directory:
+todoister export --yaml ~/todoist.yaml
 
-# Exportar a un directorio de proyectos en el inicio, con subdirectorios hasta 3 niveles de profundidad:
-todoister export ~/projects --json -d 3
+# Export to a projects directory in the home, with subdirectories down to 3 levels deep:
+todoister export --json -d 3 ~/projects
 ```
