@@ -1,17 +1,17 @@
 ## todoister tasks
 
 ```sh
-todoister tasks project... [flags]
+todoister tasks [flags] NAME...
 ```
 
 List project tasks.
 
-`project` is the name of one or more projects to list tasks from.
+`NAME` is the name of one or more projects to list tasks from.
 You can specify a project name by its full path, e.g., `Work/Project`.
 Names are case-insensitive.
 
 
-### Global Options
+### Global Flags:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
@@ -26,6 +26,9 @@ todoister tasks Life
 
 # List tasks for subproject Project of project Work:
 todoister tasks Work/Project
+
+# List tasks for both projects:
+todoister tasks Life Work/Project
 
 
 ```

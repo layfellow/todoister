@@ -3,7 +3,7 @@
 Add a new resource to Todoist (currently supports: project, task).
 
 
-### Global Options
+### Global Flags:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
@@ -12,4 +12,6 @@ Add a new resource to Todoist (currently supports: project, task).
 
 ### Commands
 
+* [todoister add project](todoister-add-project.md)	 - Add a new project
+* [todoister add task](todoister-add-task.md)	 - Add a new task to a project
 

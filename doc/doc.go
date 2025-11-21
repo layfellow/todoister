@@ -23,21 +23,12 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/layfellow/todoister/cmd"
 )
 
 const markdownExtension = ".md"
-
-var reorderCommands = []string{
-	"version",
-	"list",
-	"tasks",
-	"add",
-	"export",
-}
 
 func replaceAngleBrackets(s string) string {
 	s = strings.ReplaceAll(s, "<", "&lt;")
@@ -76,13 +67,13 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 
 	flags := cmd.NonInheritedFlags()
 	if flags.HasAvailableFlags() {
-		buf.WriteString("### Options\n\n")
+		buf.WriteString("### Flags:\n\n")
 		printFlags(buf, flags)
 	}
 
 	parentFlags := cmd.InheritedFlags()
 	if parentFlags.HasAvailableFlags() {
-		buf.WriteString("### Global Options\n\n")
+		buf.WriteString("### Global Flags:\n\n")
 		printFlags(buf, parentFlags)
 	}
 	return nil
@@ -118,18 +109,7 @@ func CustomGenMarkdown(cmd *cobra.Command, w io.Writer) error {
 	if cmd.HasSubCommands() {
 		buf.WriteString("### Commands\n\n")
 
-		children := cmd.Commands()
-
-		// HACK Reorder command list to match the order in the published documentation
-		reorderedChildren := make([]*cobra.Command, 0, len(children))
-		for _, n := range reorderCommands {
-			j := slices.IndexFunc(children, func(c *cobra.Command) bool { return c.Name() == n })
-			if j > -1 {
-				reorderedChildren = append(reorderedChildren, children[j])
-			}
-		}
-
-		for _, child := range reorderedChildren {
+		for _, child := range cmd.Commands() {
 			if child == nil || !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() {
 				continue
 			}

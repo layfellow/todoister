@@ -108,12 +108,12 @@ func createProject(token, name, parentID, color string) (*ProjectResponse, error
 }
 
 var addProjectCmd = &cobra.Command{
-	Use:   "project [PARENT/.../]NAME",
+	Use:   "project [flags] [PARENT/.../]NAME",
 	Short: "Add a new project",
 	Long: "Add a new project to Todoist.\n\n" +
 		"`NAME` is the name of the project to create.\n" +
-		"Use PARENT/NAME to create a project within a parent project.\n" +
-		"Use PARENT/SUBPARENT/NAME for nested parents.\n",
+		"Use `PARENT/NAME` to create a project within a parent project.\n" +
+		"Use `PARENT/SUBPARENT/NAME` for nested parents.\n",
 	Example: "# Add a root-level project:\n" +
 		"todoister add project \"Shopping\"\n\n" +
 		"# Add a project within a parent:\n" +
@@ -121,7 +121,7 @@ var addProjectCmd = &cobra.Command{
 		"# Add a deeply nested project:\n" +
 		"todoister add project \"Work/Projects/Q1\"\n\n" +
 		"# Add a project with a color:\n" +
-		"todoister add project --color=blue \"Personal\"\n\n" +
+		"todoister add project -c blue \"Personal\"\n\n" +
 		"# Add a colored project within a parent:\n" +
 		"todoister add project --color=red \"Work/Urgent\"",
 	Args: cobra.ExactArgs(1),
@@ -168,22 +168,22 @@ var addProjectCmd = &cobra.Command{
 }
 
 var addTaskCmd = &cobra.Command{
-	Use:   "task [flags] [PROJECT_PATH] TASK_TITLE",
+	Use:   "task [flags] [#][PARENT/.../PROJECT] TASK",
 	Short: "Add a new task to a project",
 	Long: "Add a new task to a Todoist project.\n\n" +
-		"Usage formats:\n" +
-		"  todoister add task '#[PARENT PROJECT/]PROJECT NAME' 'TASK TITLE'\n" +
-		"  todoister add task -p '[PARENT PROJECT/]PROJECT NAME' 'TASK TITLE'\n" +
-		"  todoister add task --project '[PARENT PROJECT/]PROJECT NAME' 'TASK TITLE'\n\n" +
-		"Examples:\n" +
-		"  # Add task to root-level project:\n" +
-		"  todoister add task '#Work' 'Complete report'\n\n" +
-		"  # Add task to nested project:\n" +
-		"  todoister add task '#Work/Reports' 'Create quarterly report'\n\n" +
-		"  # Add task using project flag:\n" +
-		"  todoister add task -p 'Personal' 'Buy groceries'\n\n" +
-		"  # Add task to nested project using flag:\n" +
-		"  todoister add task --project 'Personal/Shopping' 'Buy milk'",
+		"Use `#[PARENT/SUBPARENT.../]PROJECT` to specify the project name\n" +
+		"(with optional PARENT and SUBPARENT names); note the `#` character.\n\n" +
+		"Alternatively, use the --project flag to specify the project name,\n" +
+		"you can omit the `#` character\n",
+	Example: "# Add task to root-level project Work:\n" +
+		"todoister add task '#Work' 'Complete report'\n\n" +
+		"# Add task to project Reports of project Work:\n" +
+		"todoister add task '#Work/Reports' 'Create quarterly report'\n\n" +
+		"# Add tasks using project flag:\n" +
+		"todoister add task -p Work/Reports 'Create monthly report'\n" +
+		"todoister add task -p Personal 'Buy groceries'\n\n" +
+		"# Add task to nested project using flag:\n" +
+		"todoister add task --project=Personal/Shopping/List 'Buy milk'",
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Handle both argument formats
 		if projectFlag != "" {

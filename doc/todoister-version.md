@@ -7,7 +7,7 @@ todoister version [flags]
 Print the Todoister version number.
 
 
-### Global Options
+### Global Flags:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>

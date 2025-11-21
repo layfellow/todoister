@@ -16,17 +16,19 @@ func printTasks(tasks []*util.ExportedTask) {
 }
 
 var tasksCmd = &cobra.Command{
-	Use:     "tasks project...",
+	Use:     "tasks [flags] NAME...",
 	Aliases: []string{"items"},
 	Short:   "List project tasks",
 	Long: "List project tasks.\n\n" +
-		"`project` is the name of one or more projects to list tasks from.\n" +
+		"`NAME` is the name of one or more projects to list tasks from.\n" +
 		"You can specify a project name by its full path, e.g., `Work/Project`.\n" +
 		"Names are case-insensitive.\n",
 	Example: "# List tasks for project Life:\n" +
 		"todoister tasks Life\n\n" +
 		"# List tasks for subproject Project of project Work:\n" +
-		"todoister tasks Work/Project\n\n",
+		"todoister tasks Work/Project\n\n" +
+		"# List tasks for both projects:\n" +
+		"todoister tasks Life Work/Project\n\n",
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		projectData := util.HierarchicalData(util.GetTodoistData(ConfigValue.Token))

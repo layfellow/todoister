@@ -20,12 +20,12 @@ func walkProject(project *util.ExportedProject, depth int) {
 }
 
 var listCmd = &cobra.Command{
-	Use:     "list [project]...",
+	Use:     "list [flags] [NAME]...",
 	Aliases: []string{"ls", "projects"},
 	Short:   "List projects",
 	Long: "List projects and subprojects.\n\n" +
-		"`project` is the name of one or more projects to list tasks from.\n" +
-		"If no `project` is given, all projects are listed.\n" +
+		"`NAME` is the name of one or more projects to list tasks from.\n" +
+		"If no `NAME` is given, all projects are listed.\n" +
 		"You can specify a project name by its full path, e.g., `Work/Project`.\n" +
 		"Names are case-insensitive.\n",
 	Example: "# List all projects and subprojects:\n" +

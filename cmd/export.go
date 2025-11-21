@@ -11,18 +11,18 @@ var useYAML bool
 var depth int
 
 var exportCmd = &cobra.Command{
-	Use:   "export [path]",
+	Use:   "export [flags] [PATH]",
 	Short: "Export projects in JSON or YAML format",
 	Long: "Export all Todoist projects as a tree of JSON or YAML files.\n\n" +
-		"- `path` is a file or directory where to export the projects, by default `index.json`.\n",
+		"- `PATH` is a file or directory where to export the projects, by default `index.json`.\n",
 	Example: "# Export to a single index.json file in the current directory:\n" +
 		"todoister export\n\n" +
 		"# Export to todoist.json file in the home directory:\n" +
 		"todoister export ~/todoist.json\n\n" +
 		"# Export to todoist.yaml file in the home directory:\n" +
-		"todoister export ~/todoist.yaml --yaml\n\n" +
+		"todoister export --yaml ~/todoist.yaml\n\n" +
 		"# Export to a projects directory in the home, with subdirectories down to 3 levels deep:\n" +
-		"todoister export ~/projects --json -d 3",
+		"todoister export --json -d 3 ~/projects",
 
 	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {

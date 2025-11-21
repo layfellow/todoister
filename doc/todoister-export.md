@@ -1,15 +1,15 @@
 ## todoister export
 
 ```sh
-todoister export [path] [flags]
+todoister export [flags] [PATH]
 ```
 
 Export all Todoist projects as a tree of JSON or YAML files.
 
-- `path` is a file or directory where to export the projects, by default `index.json`.
+- `PATH` is a file or directory where to export the projects, by default `index.json`.
 
 
-### Options
+### Flags:
 
 <dl>
   <dt><code>-d</code>, <code>--depth</code> <code>&lt;int&gt;</code></dt>
@@ -21,7 +21,7 @@ Export all Todoist projects as a tree of JSON or YAML files.
   <dd>export in YAML format</dd>
 </dl>
 
-### Global Options
+### Global Flags:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
@@ -38,9 +38,9 @@ todoister export
 todoister export ~/todoist.json
 
 # Export to todoist.yaml file in the home directory:
-todoister export ~/todoist.yaml --yaml
+todoister export --yaml ~/todoist.yaml
 
 # Export to a projects directory in the home, with subdirectories down to 3 levels deep:
-todoister export ~/projects --json -d 3
+todoister export --json -d 3 ~/projects
 ```
 

@@ -84,12 +84,12 @@ func CustomHelpFunc(cmd *cobra.Command, args []string) {
 
 	flags := cmd.NonInheritedFlags()
 	if flags.HasAvailableFlags() {
-		fmt.Println("Options:")
+		fmt.Println("Flags:")
 		printFlags(flags)
 	}
 	parentFlags := cmd.InheritedFlags()
 	if parentFlags.HasAvailableFlags() {
-		fmt.Println("Global Options:")
+		fmt.Println("Global Flags:")
 		printFlags(parentFlags)
 	}
 
