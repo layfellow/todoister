@@ -4,22 +4,15 @@
 [README in English](README.md)
 
 Todoister es un cliente CLI simple para [Todoist](https://todoist.com/) escrito en Go.
+Úselo para gestionar rápidamente sus tareas y proyectos de Todoist en un terminal.
 
-**Funciones actuales:**
+También ofrece una función de exportación mucho mejor que la copia de seguridad CSV estándar:
+la exportación de Todoister admite JSON o YAML estructurados con profundidad configurable
+para directorios anidados.
 
-- `list`: listar proyectos en vista jerárquica.
-- `tasks`: listar tareas dentro de proyectos.
-- `add project`: crear nuevos proyectos (con color y jerarquía opcionales).
-- `add task`: crear nuevas tareas en proyectos existentes con sintaxis flexible.
-- `export`: exportar proyectos y tareas a JSON o YAML con estructura jerárquica.
+Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.
 
-Escribí esto porque quería una forma simple y rápida de gestionar mis tareas y proyectos de Todoist en un terminal.
-
-Además, estaba insatisfecho con la única opción de exportación de Todoist, que es un archivo de valores separados por comas no estructurado
-([el horror, el horror](https://www.oxfordreference.com/display/10.1093/acref/9780199567454.001.0001/acref-9780199567454-e-931)),
-que carece del detalle que necesito. Quería algo compatible con cron jobs para respaldos no supervisados, en un formato más manejable, como JSON o YAML.
-
-*Más características como edición de tareas, gestión de etiquetas, etc. próximamente.*
+*Todoister aún está en desarrollo. Próximamente se añadirán más funciones, como la edición de tareas, la gestión de etiquetas, etc.*
 
 ## Instalación
 
@@ -78,7 +71,7 @@ format = ""
 depth = 0
 ```
 
-Por ejemplo, en lugar de `todoister export ~/projects --yaml -d 3` simplemente ejecute `todoist export` con:
+Por ejemplo, en lugar de `todoister export --yaml -d 3 ~/projects` simplemente ejecute `todoist export` con:
 
 ```toml
 [export]
@@ -102,38 +95,3 @@ No se escriben registros en modo interactivo.
 ## Comandos
 
 Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.
-
-### Ejemplos de Uso Básico
-
-```sh
-# Listar todos los proyectos
-todoister list
-
-# Listar tareas en un proyecto
-todoister tasks NombreProyecto
-
-# Crear un nuevo proyecto
-todoister add project "Nuevo Proyecto"
-
-# Crear un proyecto con color
-todoister add project --color=blue "Cosas Importantes"
-
-# Crear un proyecto anidado
-todoister add project "Trabajo/Informes"
-
-# Añadir una tarea a un proyecto
-todoister add task -p "Trabajo" "Completar el informe"
-
-# Añadir una tarea a un proyecto anidado
-todoister add task -p "Trabajo/Informes" "Crear resumen trimestral"
-
-# Sintaxis alternativa para añadir tareas
-todoister add task "#Personal" "Comprar víveres"
-
-# Exportar a JSON
-todoister export ~/respaldo.json
-
-# Exportar a YAML con estructura de directorios anidada
-todoister export ~/respaldo --yaml -d 3
-```
-

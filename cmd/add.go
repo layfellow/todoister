@@ -173,8 +173,8 @@ var addTaskCmd = &cobra.Command{
 	Long: "Add a new task to a Todoist project.\n\n" +
 		"Use `#[PARENT/SUBPARENT.../]PROJECT` to specify the project name with optional\n" +
 		"`PARENT` and `SUBPARENTS` (note the '`#`' character prefix and the single quotes).\n\n" +
-		"Alternatively, you can use the --project flag to specify the project name\n" +
-		"and omit the '`#`' character prefix and the quotes.\n",
+		"Alternatively, you can use the `--project` flag to specify the project name\n" +
+		"and omit the '`#`' prefix and the quotes.\n",
 	Example: "# Add task to root-level project Work:\n" +
 		"todoister add task '#Work' 'Complete report'\n\n" +
 		"# Add task to project Reports of project Work:\n" +

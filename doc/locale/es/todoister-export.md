@@ -25,21 +25,21 @@ Exporta todos los proyectos de Todoist como un árbol de archivos JSON o YAML.
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
-  <dd>usar <code>&lt;string&gt;</code> como token de API de Todoist</dd>
+  <dd>usa <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
 </dl>
 
 ### Ejemplos
 
 ```sh
-# Export to a single index.json file in the current directory:
+# Exportar a un único archivo index.json en el directorio actual:
 todoister export
 
-# Export to todoist.json file in the home directory:
+# Exportar a un archivo todoist.json en el directorio home:
 todoister export ~/todoist.json
 
-# Export to todoist.yaml file in the home directory:
+# Exportar a un archivo todoist.yaml en el directorio home:
 todoister export --yaml ~/todoist.yaml
 
-# Export to a projects directory in the home, with subdirectories down to 3 levels deep:
+# Exportar a un directorio projects en el home, con subdirectorios hasta 3 niveles de profundidad:
 todoister export --json -d 3 ~/projects
 ```

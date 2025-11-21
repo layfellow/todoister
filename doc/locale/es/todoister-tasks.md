@@ -7,7 +7,7 @@ todoister tasks [flags] NAME...
 Lista las tareas de un proyecto.
 
 `NAME` es el nombre de uno o más proyectos de los cuales listar tareas.
-Puede especificar el nombre de un proyecto por su ruta completa, ej., `Work/Project`.
+Puede especificar el nombre de un proyecto mediante su ruta completa, por ejemplo, `Trabajo/Proyecto`.
 Los nombres no distinguen entre mayúsculas y minúsculas.
 
 
@@ -21,12 +21,12 @@ Los nombres no distinguen entre mayúsculas y minúsculas.
 ### Ejemplos
 
 ```sh
-# Listar tareas para el proyecto Life:
-todoister tasks Life
+# Lista las tareas del proyecto Vida:
+todoister tasks Vida
 
-# Listar tareas para el subproyecto Project del proyecto Work:
-todoister tasks Work/Project
+# Lista las tareas del subproyecto Proyecto del proyecto Trabajo:
+todoister tasks Trabajo/Proyecto
 
-# Listar tareas para ambos proyectos:
-todoister tasks Life Work/Project
+# Lista las tareas de ambos proyectos:
+todoister tasks Vida Trabajo/Proyecto
 ```

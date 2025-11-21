@@ -9,8 +9,8 @@ Add a new task to a Todoist project.
 Use `#[PARENT/SUBPARENT.../]PROJECT` to specify the project name with optional
 `PARENT` and `SUBPARENTS` (note the '`#`' character prefix and the single quotes).
 
-Alternatively, you can use the --project flag to specify the project name
-and omit the '`#`' character prefix and the quotes.
+Alternatively, you can use the `--project` flag to specify the project name
+and omit the '`#`' prefix and the quotes.
 
 
 ### Flags:
