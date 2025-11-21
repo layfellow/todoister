@@ -28,7 +28,7 @@ var tasksCmd = &cobra.Command{
 		"# List tasks for subproject Project of project Work:\n" +
 		"todoister tasks Work/Project\n\n" +
 		"# List tasks for both projects:\n" +
-		"todoister tasks Life Work/Project\n\n",
+		"todoister tasks Life Work/Project",
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		projectData := util.HierarchicalData(util.GetTodoistData(ConfigValue.Token))

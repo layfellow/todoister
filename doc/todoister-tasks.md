@@ -29,7 +29,5 @@ todoister tasks Work/Project
 
 # List tasks for both projects:
 todoister tasks Life Work/Project
-
-
 ```
 
