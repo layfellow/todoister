@@ -29,7 +29,7 @@ Para Windows ... eh,
 así que no hay versiones para éste, pero el binario de Linux debería funcionar bajo
 [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/).
 
-Alternativamente, si tiene Go (versión 1.22 o posterior), puede descargar, compilar e instalar
+Alternativamente, si tiene Go (versión 1.24 o posterior), puede descargar, compilar e instalar
 Todoister con:
 
 ```sh

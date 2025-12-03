@@ -30,7 +30,7 @@ For Windows ... huh,
 so there are no releases for it, but the Linux binary should work under
 [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/).
 
-Alternatively, if you have Go (version 1.22 or later), you can download, compile and install
+Alternatively, if you have Go (version 1.24 or later), you can download, compile and install
 Todoister with:
 
 ```sh

@@ -4,7 +4,7 @@
 
 Pull requests are welcome.
 
-Todoister is written in Go (minimum version 1.22). It uses the
+Todoister is written in Go (minimum version 1.24). It uses the
 [Cobra framework](https://cobra.dev/)
 for the CLI. Commands reside in `cmd`, utilities in `util`.
 

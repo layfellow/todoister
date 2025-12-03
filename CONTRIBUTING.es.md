@@ -4,7 +4,7 @@
 
 Los *pull requests* son bienvenidos.
 
-Todoister está escrito en Go (versión mínima 1.22). Utiliza el
+Todoister está escrito en Go (versión mínima 1.24). Utiliza el
 [framework Cobra](https://cobra.dev/)
 para la CLI. Los comandos residen en `cmd`, las utilidades en `util`.
 
