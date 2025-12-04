@@ -7,6 +7,9 @@ import (
 
 const (
 	VersionText = "Minimal Todoist CLI client"
+
+	rootLong = `Todoister is a simple Todoist CLI client written in Go.
+`
 )
 
 var Version = "DEV"
@@ -17,7 +20,7 @@ var RootCmd = &cobra.Command{
 	Use:               "todoister command [arguments]",
 	Version:           Version,
 	Short:             VersionText,
-	Long:              "Todoister is a simple Todoist CLI client written in Go.\n",
+	Long:              rootLong,
 	DisableAutoGenTag: true,
 }
 

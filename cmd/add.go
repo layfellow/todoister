@@ -8,35 +8,74 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	colorList = "berry_red, red, orange, yellow, olive_green, lime_green, green, mint_green, teal, sky_blue, light_blue, blue, grape, violet, lavender, magenta, salmon, charcoal, grey, taupe"
+
+	addLong = `Add a new resource to Todoist (currently supports: project, task).
+`
+
+	addProjectLong = `Add a new project to Todoist.
+
+<code>NAME</code> is the name of the project to create.
+Use <code>PARENT/NAME</code> to create a project within a parent project.
+Use <code>PARENT/SUBPARENT/NAME</code> for nested parents.
+`
+
+	addProjectExample = `# Add a root-level project:
+todoister add project Shopping
+
+# Add a project within a parent:
+todoister add project Work/Reports
+
+# Add a deeply nested project:
+todoister add project Work/Projects/Q1
+
+# Add a project with a color:
+todoister add project -c blue Personal
+
+# Add a project with a color within a parent:
+todoister add project --color=red Work/Urgent`
+
+	addTaskLong = `Add a new task to a Todoist project.
+
+Use <code>#[PARENT/SUBPARENT.../]PROJECT</code> to specify the project name with optional
+<code>PARENT</code> and <code>SUBPARENTS</code> (note the '<code>#</code>' character prefix and the single quotes).
+
+Alternatively, you can use the <code>--project</code> flag to specify the project name
+and omit the '<code>#</code>' prefix and the quotes.
+`
+
+	addTaskExample = `# Add task to root-level project Work:
+todoister add task '#Work' 'Complete report'
+
+# Add task to project Reports of project Work:
+todoister add task '#Work/Reports' 'Create quarterly report'
+
+# Add tasks using project flag:
+todoister add task -p Work/Reports 'Create monthly report'
+todoister add task -p Personal 'Buy groceries'
+
+# Add task to nested project using flag:
+todoister add task --project=Personal/Shopping/List 'Buy milk'`
+)
+
 var (
 	projectColor string
 	projectFlag  string
 )
 
 var addProjectCmd = &cobra.Command{
-	Use:   "project [flags] [PARENT/.../]NAME",
-	Short: "Add a new project",
-	Long: "Add a new project to Todoist.\n\n" +
-		"<code>NAME</code> is the name of the project to create.\n" +
-		"Use <code>PARENT/NAME</code> to create a project within a parent project.\n" +
-		"Use <code>PARENT/SUBPARENT/NAME</code> for nested parents.\n",
-	Example: "# Add a root-level project:\n" +
-		"todoister add project \"Shopping\"\n\n" +
-		"# Add a project within a parent:\n" +
-		"todoister add project \"Work/Reports\"\n\n" +
-		"# Add a deeply nested project:\n" +
-		"todoister add project \"Work/Projects/Q1\"\n\n" +
-		"# Add a project with a color:\n" +
-		"todoister add project -c blue \"Personal\"\n\n" +
-		"# Add a colored project within a parent:\n" +
-		"todoister add project --color=red \"Work/Urgent\"",
-	Args: cobra.ExactArgs(1),
+	Use:     "project [flags] [PARENT/.../]NAME",
+	Short:   "Add a new project",
+	Long:    addProjectLong,
+	Example: addProjectExample,
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
 
 		// Validate color if provided
 		if projectColor != "" && !util.ValidColors[projectColor] {
-			util.Die(fmt.Sprintf("Invalid color '%s'. Valid colors are: berry_red, red, orange, yellow, olive_green, lime_green, green, mint_green, teal, sky_blue, light_blue, blue, grape, violet, lavender, magenta, salmon, charcoal, grey, taupe", projectColor), nil)
+			util.Die(fmt.Sprintf("Invalid color '%s'. Valid colors are: %s", projectColor, colorList), nil)
 		}
 
 		// Parse the path to extract parent and project name
@@ -74,22 +113,10 @@ var addProjectCmd = &cobra.Command{
 }
 
 var addTaskCmd = &cobra.Command{
-	Use:   "task [flags] [#][PARENT/.../PROJECT] TASK",
-	Short: "Add a new task to a project",
-	Long: "Add a new task to a Todoist project.\n\n" +
-		"Use <code>#[PARENT/SUBPARENT.../]PROJECT</code> to specify the project name with optional\n" +
-		"<code>PARENT</code> and <code>SUBPARENTS</code> (note the '<code>#</code>' character prefix and the single quotes).\n\n" +
-		"Alternatively, you can use the <code>--project</code> flag to specify the project name\n" +
-		"and omit the '<code>#</code>' prefix and the quotes.\n",
-	Example: "# Add task to root-level project Work:\n" +
-		"todoister add task '#Work' 'Complete report'\n\n" +
-		"# Add task to project Reports of project Work:\n" +
-		"todoister add task '#Work/Reports' 'Create quarterly report'\n\n" +
-		"# Add tasks using project flag:\n" +
-		"todoister add task -p Work/Reports 'Create monthly report'\n" +
-		"todoister add task -p Personal 'Buy groceries'\n\n" +
-		"# Add task to nested project using flag:\n" +
-		"todoister add task --project=Personal/Shopping/List 'Buy milk'",
+	Use:     "task [flags] [#][PARENT/.../PROJECT] TASK",
+	Short:   "Add a new task to a project",
+	Long:    addTaskLong,
+	Example: addTaskExample,
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Handle both argument formats
 		if projectFlag != "" {
@@ -171,12 +198,12 @@ var addTaskCmd = &cobra.Command{
 var addCmd = &cobra.Command{
 	Use:   "add <resource> [arguments]",
 	Short: "Add a new resource",
-	Long:  "Add a new resource to Todoist (currently supports: project, task).\n",
+	Long:  addLong,
 }
 
 func init() {
 	addProjectCmd.Flags().StringVarP(&projectColor, "color", "c", "",
-		"project color (berry_red, red, orange, yellow, olive_green, lime_green, green, mint_green, teal, sky_blue, light_blue, blue, grape, violet, lavender, magenta, salmon, charcoal, grey, taupe)")
+		"project color ("+colorList+")")
 	addProjectCmd.SetHelpFunc(util.CustomHelpFunc)
 
 	addTaskCmd.Flags().StringVarP(&projectFlag, "project", "p", "",

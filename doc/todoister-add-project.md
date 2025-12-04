@@ -29,18 +29,18 @@ Use <code>PARENT/SUBPARENT/NAME</code> for nested parents.
 
 ```sh
 # Add a root-level project:
-todoister add project "Shopping"
+todoister add project Shopping
 
 # Add a project within a parent:
-todoister add project "Work/Reports"
+todoister add project Work/Reports
 
 # Add a deeply nested project:
-todoister add project "Work/Projects/Q1"
+todoister add project Work/Projects/Q1
 
 # Add a project with a color:
-todoister add project -c blue "Personal"
+todoister add project -c blue Personal
 
-# Add a colored project within a parent:
-todoister add project --color=red "Work/Urgent"
+# Add a project with a color within a parent:
+todoister add project --color=red Work/Urgent
 ```
 

@@ -1,9 +1,29 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/layfellow/todoister/util"
 	"github.com/spf13/cobra"
-	"strings"
+)
+
+const (
+	exportLong = `Export all Todoist projects as a tree of JSON or YAML files.
+
+- <code>PATH</code> is a file or directory where to export the projects, by default <code>index.json</code>.
+`
+
+	exportExample = `# Export to a single index.json file in the current directory:
+todoister export
+
+# Export to todoist.json file in the home directory:
+todoister export ~/todoist.json
+
+# Export to todoist.yaml file in the home directory:
+todoister export --yaml ~/todoist.yaml
+
+# Export to a projects directory in the home, with subdirectories down to 3 levels deep:
+todoister export --json -d 3 ~/projects`
 )
 
 var useJSON bool
@@ -11,20 +31,11 @@ var useYAML bool
 var depth int
 
 var exportCmd = &cobra.Command{
-	Use:   "export [flags] [PATH]",
-	Short: "Export projects in JSON or YAML format",
-	Long: "Export all Todoist projects as a tree of JSON or YAML files.\n\n" +
-		"- <code>PATH</code> is a file or directory where to export the projects, by default <code>index.json</code>.\n",
-	Example: "# Export to a single index.json file in the current directory:\n" +
-		"todoister export\n\n" +
-		"# Export to todoist.json file in the home directory:\n" +
-		"todoister export ~/todoist.json\n\n" +
-		"# Export to todoist.yaml file in the home directory:\n" +
-		"todoister export --yaml ~/todoist.yaml\n\n" +
-		"# Export to a projects directory in the home, with subdirectories down to 3 levels deep:\n" +
-		"todoister export --json -d 3 ~/projects",
-
-	Args: cobra.MaximumNArgs(1),
+	Use:     "export [flags] [PATH]",
+	Short:   "Export projects in JSON or YAML format",
+	Long:    exportLong,
+	Example: exportExample,
+	Args:    cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if !useJSON && !useYAML {

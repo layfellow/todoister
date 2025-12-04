@@ -2,9 +2,29 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/layfellow/todoister/util"
 	"github.com/spf13/cobra"
-	"strings"
+)
+
+const (
+	listLong = `List projects and subprojects.
+
+<code>NAME</code> is the name of one or more projects to list tasks from.
+If no <code>NAME</code> is given, all projects are listed.
+You can specify a project name by its full path, e.g., <code>Work/Project</code>.
+Names are case-insensitive.
+`
+
+	listExample = `# List all projects and subprojects:
+todoister ls
+
+# List projects Work and Life and their subprojects:
+todoister ls Work Life
+
+# List all subprojects of Project, which is a subproject of Work:
+todoister ls Work/Project`
 )
 
 func walkProject(project *util.ExportedProject, depth int) {
@@ -23,17 +43,8 @@ var listCmd = &cobra.Command{
 	Use:     "list [flags] [NAME]...",
 	Aliases: []string{"ls", "projects"},
 	Short:   "List projects",
-	Long: "List projects and subprojects.\n\n" +
-		"<code>NAME</code> is the name of one or more projects to list tasks from.\n" +
-		"If no <code>NAME</code> is given, all projects are listed.\n" +
-		"You can specify a project name by its full path, e.g., <code>Work/Project</code>.\n" +
-		"Names are case-insensitive.\n",
-	Example: "# List all projects and subprojects:\n" +
-		"todoister ls\n\n" +
-		"# List projects Work and Life and their subprojects:\n" +
-		"todoister ls Work Life\n\n" +
-		"# List all subprojects of Project, which is a subproject of Work:\n" +
-		"todoister ls Work/Project",
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		projectData := util.HierarchicalData(util.GetTodoistData(ConfigValue.Token))
 		project := util.ExportedProject{Subprojects: projectData}

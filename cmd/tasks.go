@@ -2,8 +2,27 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/layfellow/todoister/util"
 	"github.com/spf13/cobra"
+)
+
+const (
+	tasksLong = `List project tasks.
+
+<code>NAME</code> is the name of one or more projects to list tasks from.
+You can specify a project name by its full path, e.g., <code>Work/Project</code>.
+Names are case-insensitive.
+`
+
+	tasksExample = `# List tasks for project Life:
+todoister tasks Life
+
+# List tasks for subproject Project of project Work:
+todoister tasks Work/Project
+
+# List tasks for both projects:
+todoister tasks Life Work/Project`
 )
 
 func printTasks(tasks []*util.ExportedTask) {
@@ -19,17 +38,9 @@ var tasksCmd = &cobra.Command{
 	Use:     "tasks [flags] NAME...",
 	Aliases: []string{"items"},
 	Short:   "List project tasks",
-	Long: "List project tasks.\n\n" +
-		"<code>NAME</code> is the name of one or more projects to list tasks from.\n" +
-		"You can specify a project name by its full path, e.g., <code>Work/Project</code>.\n" +
-		"Names are case-insensitive.\n",
-	Example: "# List tasks for project Life:\n" +
-		"todoister tasks Life\n\n" +
-		"# List tasks for subproject Project of project Work:\n" +
-		"todoister tasks Work/Project\n\n" +
-		"# List tasks for both projects:\n" +
-		"todoister tasks Life Work/Project",
-	Args: cobra.MinimumNArgs(1),
+	Long:    tasksLong,
+	Example: tasksExample,
+	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		projectData := util.HierarchicalData(util.GetTodoistData(ConfigValue.Token))
 		project := util.ExportedProject{Subprojects: projectData}
