@@ -12,6 +12,30 @@ const (
 	TodoistBaseURL = "https://api.todoist.com/api/v1"
 )
 
+// ValidColors are the allowed color values for projects
+var ValidColors = map[string]bool{
+	"berry_red":   true,
+	"red":         true,
+	"orange":      true,
+	"yellow":      true,
+	"olive_green": true,
+	"lime_green":  true,
+	"green":       true,
+	"mint_green":  true,
+	"teal":        true,
+	"sky_blue":    true,
+	"light_blue":  true,
+	"blue":        true,
+	"grape":       true,
+	"violet":      true,
+	"lavender":    true,
+	"magenta":     true,
+	"salmon":      true,
+	"charcoal":    true,
+	"grey":        true,
+	"taupe":       true,
+}
+
 // PaginatedResponse represents a paginated API response
 type PaginatedResponse struct {
 	Results    json.RawMessage `json:"results"`
@@ -246,7 +270,22 @@ type TaskCreateRequest struct {
 	ProjectID string `json:"project_id,omitempty"`
 }
 
-// createTask makes a POST request to create a new task using the REST API v1
+// ProjectCreateRequest represents the request body for creating a project
+type ProjectCreateRequest struct {
+	Name     string `json:"name"`
+	ParentID string `json:"parent_id,omitempty"`
+	Color    string `json:"color,omitempty"`
+}
+
+// ProjectResponse represents a project response from the API
+type ProjectResponse struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	ParentID string `json:"parent_id"`
+	Color    string `json:"color"`
+}
+
+// CreateTask makes a POST request to create a new task using the REST API v1
 func CreateTask(token, content, projectID string) (*TaskResponse, error) {
 	client := &http.Client{}
 
@@ -295,4 +334,56 @@ func CreateTask(token, content, projectID string) (*TaskResponse, error) {
 	}
 
 	return &task, nil
+}
+
+// CreateProject makes a POST request to create a new project
+func CreateProject(token, name, parentID, color string) (*ProjectResponse, error) {
+	client := &http.Client{}
+
+	reqBody := ProjectCreateRequest{
+		Name:     name,
+		ParentID: parentID,
+		Color:    color,
+	}
+
+	bodyBytes, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	url := fmt.Sprintf("%s/projects", TodoistBaseURL)
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(bodyBytes)))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make request: %w", err)
+	}
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			Warn("Failed to close response body", cerr)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(body))
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	var project ProjectResponse
+	if err := json.Unmarshal(body, &project); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	return &project, nil
 }

@@ -1,10 +1,7 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
 
 	"github.com/layfellow/todoister/util"
@@ -15,97 +12,6 @@ var (
 	projectColor string
 	projectFlag  string
 )
-
-// validColors are the allowed color values for projects
-var validColors = map[string]bool{
-	"berry_red":   true,
-	"red":         true,
-	"orange":      true,
-	"yellow":      true,
-	"olive_green": true,
-	"lime_green":  true,
-	"green":       true,
-	"mint_green":  true,
-	"teal":        true,
-	"sky_blue":    true,
-	"light_blue":  true,
-	"blue":        true,
-	"grape":       true,
-	"violet":      true,
-	"lavender":    true,
-	"magenta":     true,
-	"salmon":      true,
-	"charcoal":    true,
-	"grey":        true,
-	"taupe":       true,
-}
-
-// ProjectCreateRequest represents the request body for creating a project
-type ProjectCreateRequest struct {
-	Name     string `json:"name"`
-	ParentID string `json:"parent_id,omitempty"`
-	Color    string `json:"color,omitempty"`
-}
-
-// ProjectResponse represents a project response from the API
-type ProjectResponse struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	ParentID string `json:"parent_id"`
-	Color    string `json:"color"`
-}
-
-// createProject makes a POST request to create a new project
-func createProject(token, name, parentID, color string) (*ProjectResponse, error) {
-	client := &http.Client{}
-
-	reqBody := ProjectCreateRequest{
-		Name:     name,
-		ParentID: parentID,
-		Color:    color,
-	}
-
-	bodyBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %w", err)
-	}
-
-	url := fmt.Sprintf("%s/projects", util.TodoistBaseURL)
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(bodyBytes)))
-	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
-	}
-
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to make request: %w", err)
-	}
-	defer func() {
-		if cerr := resp.Body.Close(); cerr != nil {
-			util.Warn("Failed to close response body", cerr)
-		}
-	}()
-
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(body))
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	var project ProjectResponse
-	if err := json.Unmarshal(body, &project); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
-	}
-
-	return &project, nil
-}
 
 var addProjectCmd = &cobra.Command{
 	Use:   "project [flags] [PARENT/.../]NAME",
@@ -129,7 +35,7 @@ var addProjectCmd = &cobra.Command{
 		path := args[0]
 
 		// Validate color if provided
-		if projectColor != "" && !validColors[projectColor] {
+		if projectColor != "" && !util.ValidColors[projectColor] {
 			util.Die(fmt.Sprintf("Invalid color '%s'. Valid colors are: berry_red, red, orange, yellow, olive_green, lime_green, green, mint_green, teal, sky_blue, light_blue, blue, grape, violet, lavender, magenta, salmon, charcoal, grey, taupe", projectColor), nil)
 		}
 
@@ -153,7 +59,7 @@ var addProjectCmd = &cobra.Command{
 		}
 
 		// Create the project
-		project, err := createProject(ConfigValue.Token, projectName, parentID, projectColor)
+		project, err := util.CreateProject(ConfigValue.Token, projectName, parentID, projectColor)
 		if err != nil {
 			util.Die("Failed to create project", err)
 		}

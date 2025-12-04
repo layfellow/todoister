@@ -15,20 +15,20 @@ func TestValidColors(t *testing.T) {
 
 	// Test that all expected colors are valid
 	for _, color := range validColorList {
-		if !validColors[color] {
-			t.Errorf("Expected color '%s' to be valid, but it's not in validColors map", color)
+		if !util.ValidColors[color] {
+			t.Errorf("Expected color '%s' to be valid, but it's not in ValidColors map", color)
 		}
 	}
 
 	// Test that the count matches
-	if len(validColors) != len(validColorList) {
-		t.Errorf("Expected %d valid colors, but validColors map has %d entries", len(validColorList), len(validColors))
+	if len(util.ValidColors) != len(validColorList) {
+		t.Errorf("Expected %d valid colors, but ValidColors map has %d entries", len(validColorList), len(util.ValidColors))
 	}
 
 	// Test that invalid colors are not in the map
 	invalidColors := []string{"invalid", "purple", "pink", "brown", ""}
 	for _, color := range invalidColors {
-		if validColors[color] {
+		if util.ValidColors[color] {
 			t.Errorf("Color '%s' should not be valid", color)
 		}
 	}
@@ -93,19 +93,19 @@ func TestTaskResponseStructure(t *testing.T) {
 func TestProjectCreateRequestJSON(t *testing.T) {
 	tests := []struct {
 		name     string
-		request  ProjectCreateRequest
+		request  util.ProjectCreateRequest
 		expected string
 	}{
 		{
 			name: "basic project",
-			request: ProjectCreateRequest{
+			request: util.ProjectCreateRequest{
 				Name: "Test Project",
 			},
 			expected: `{"name":"Test Project"}`,
 		},
 		{
 			name: "project with color",
-			request: ProjectCreateRequest{
+			request: util.ProjectCreateRequest{
 				Name:  "Colored Project",
 				Color: "blue",
 			},
@@ -113,7 +113,7 @@ func TestProjectCreateRequestJSON(t *testing.T) {
 		},
 		{
 			name: "project with parent",
-			request: ProjectCreateRequest{
+			request: util.ProjectCreateRequest{
 				Name:     "Sub Project",
 				ParentID: "12345",
 			},
@@ -121,7 +121,7 @@ func TestProjectCreateRequestJSON(t *testing.T) {
 		},
 		{
 			name: "project with all fields",
-			request: ProjectCreateRequest{
+			request: util.ProjectCreateRequest{
 				Name:     "Complete Project",
 				ParentID: "67890",
 				Color:    "red",
