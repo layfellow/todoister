@@ -2,7 +2,8 @@
 
 [CONTRIBUCIONES en español](CONTRIBUTING.es.md)
 
-Pull requests are welcome.
+Pull requests are welcome. LLM-generated code is acceptable, as long as it is
+clearly labeled as such and was reviewed by a human.
 
 Todoister is written in Go (minimum version 1.24). It uses the
 [Cobra framework](https://cobra.dev/)

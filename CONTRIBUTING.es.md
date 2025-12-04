@@ -2,7 +2,9 @@
 
 [CONTRIBUTING in English](CONTRIBUTING.md)
 
-Los *pull requests* son bienvenidos.
+Los *pull requests* son bienvenidos. Se acepta el código generado por LLM,
+siempre y cuando esté claramente etiquetado como tal y haya sido revisado
+por un humano.
 
 Todoister está escrito en Go (versión mínima 1.24). Utiliza el
 [framework Cobra](https://cobra.dev/)
