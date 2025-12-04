@@ -30,10 +30,10 @@ func TestVersionCommand(t *testing.T) {
 	}
 
 	// Restore stdout and read captured output
-	w.Close()
+	_ = w.Close()
 	os.Stdout = oldStdout
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	_, _ = io.Copy(&buf, r)
 
 	// Check the output
 	expected := fmt.Sprintf("%s v%s\n", VersionText, Version)

@@ -212,9 +212,7 @@ var addTaskCmd = &cobra.Command{
 			taskTitle = args[1]
 
 			// Remove leading # if present
-			if strings.HasPrefix(projectPath, "#") {
-				projectPath = projectPath[1:]
-			}
+			projectPath = strings.TrimPrefix(projectPath, "#")
 		}
 
 		// Parse the project path to extract parent and project name

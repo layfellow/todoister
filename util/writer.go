@@ -139,7 +139,7 @@ func writeProject(dirname string, basename string, format ExportFormat, depth in
 			Warn("Failed to clear directory", err)
 		}
 	}
-	if project.Subprojects == nil || len(project.Subprojects) == 0 || depth == 0 {
+	if len(project.Subprojects) == 0 || depth == 0 {
 		err := writeProjectFile(filepath.Join(dirname, basename), format, project, true)
 		if err != nil {
 			return err

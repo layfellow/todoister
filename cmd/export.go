@@ -28,12 +28,12 @@ var exportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if !useJSON && !useYAML {
-			useJSON = strings.ToLower(ConfigValue.Export.Format) == "json"
-			useYAML = strings.ToLower(ConfigValue.Export.Format) == "yaml"
+			useJSON = strings.ToLower(ConfigValue.Format) == "json"
+			useYAML = strings.ToLower(ConfigValue.Format) == "yaml"
 		}
 
 		if depth < 0 {
-			depth = ConfigValue.Export.Depth
+			depth = ConfigValue.Depth
 		}
 
 		var exportFormat util.ExportFormat
@@ -46,8 +46,8 @@ var exportCmd = &cobra.Command{
 			exportPath = util.JSONExportPath
 		}
 
-		if ConfigValue.Export.Path != "" {
-			exportPath = ConfigValue.Export.Path
+		if ConfigValue.Path != "" {
+			exportPath = ConfigValue.Path
 		}
 		if len(args) > 0 {
 			exportPath = args[0]

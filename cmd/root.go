@@ -23,7 +23,7 @@ var RootCmd = &cobra.Command{
 
 func initAll() {
 	util.InitConfig(&ConfigValue)
-	util.InitLogger(ConfigValue.Log.Name)
+	util.InitLogger(ConfigValue.Name)
 }
 
 func init() {

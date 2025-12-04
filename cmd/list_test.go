@@ -59,10 +59,10 @@ func TestListCommand(t *testing.T) {
 	walkProject(&project, 0)
 
 	// Restore stdout and read captured output
-	w.Close()
+	_ = w.Close()
 	os.Stdout = oldStdout
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	_, _ = io.Copy(&buf, r)
 
 	// Expected output for simple test data
 	expected := `# Projects
@@ -98,10 +98,10 @@ func TestTasksCommand(t *testing.T) {
 	}
 
 	// Restore stdout and read captured output
-	w.Close()
+	_ = w.Close()
 	os.Stdout = oldStdout
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	_, _ = io.Copy(&buf, r)
 
 	// Expected output for Beta project
 	expected := `

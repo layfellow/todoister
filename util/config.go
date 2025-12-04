@@ -62,16 +62,16 @@ func InitConfig(config *ConfigType) {
 	if config.Token == "" {
 		config.Token = viper.GetString("token")
 	}
-	if config.Log.Name == "" {
-		config.Log.Name, _ = ExpandPath(viper.GetString("log.name"))
+	if config.Name == "" {
+		config.Name, _ = ExpandPath(viper.GetString("log.name"))
 	}
-	if config.Export.Path == "" {
-		config.Export.Path, _ = ExpandPath(viper.GetString("export.path"))
+	if config.Path == "" {
+		config.Path, _ = ExpandPath(viper.GetString("export.path"))
 	}
-	if config.Export.Format == "" {
-		config.Export.Format, _ = ExpandPath(viper.GetString("export.format"))
+	if config.Format == "" {
+		config.Format, _ = ExpandPath(viper.GetString("export.format"))
 	}
-	if config.Export.Depth == 0 {
-		config.Export.Depth = viper.GetInt("export.depth")
+	if config.Depth == 0 {
+		config.Depth = viper.GetInt("export.depth")
 	}
 }

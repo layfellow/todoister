@@ -45,12 +45,12 @@ func printFlags(buf *bytes.Buffer, flags *pflag.FlagSet) {
 
 		buf.WriteString("  <dt>")
 		if len(flag.Shorthand) > 0 {
-			buf.WriteString(fmt.Sprintf("<code>-%s</code>, <code>--%s</code>", flag.Shorthand, flag.Name))
+			fmt.Fprintf(buf, "<code>-%s</code>, <code>--%s</code>", flag.Shorthand, flag.Name)
 		} else {
-			buf.WriteString(fmt.Sprintf("<code>--%s</code>", flag.Name))
+			fmt.Fprintf(buf, "<code>--%s</code>", flag.Name)
 		}
 		if flag.Value.Type() != "bool" {
-			buf.WriteString(fmt.Sprintf(" <code>&lt;%s&gt;</code>", flag.Value.Type()))
+			fmt.Fprintf(buf, " <code>&lt;%s&gt;</code>", flag.Value.Type())
 		}
 		buf.WriteString("</dt>\n")
 		buf.WriteString("  <dd>" + replaceAngleBrackets(flag.Usage) + "</dd>\n")
@@ -91,7 +91,7 @@ func CustomGenMarkdown(cmd *cobra.Command, w io.Writer) error {
 		if !strings.Contains(cmd.UseLine(), "[flags]") {
 			flagUsage = " [flags]"
 		}
-		buf.WriteString(fmt.Sprintf("```sh\n%s%s\n```\n\n", cmd.UseLine(), flagUsage))
+		fmt.Fprintf(buf, "```sh\n%s%s\n```\n\n", cmd.UseLine(), flagUsage)
 	}
 	if len(cmd.Long) > 0 {
 		buf.WriteString(cmd.Long + "\n\n")
@@ -103,7 +103,7 @@ func CustomGenMarkdown(cmd *cobra.Command, w io.Writer) error {
 
 	if len(cmd.Example) > 0 {
 		buf.WriteString("### Examples\n\n")
-		buf.WriteString(fmt.Sprintf("```sh\n%s\n```\n\n", cmd.Example))
+		fmt.Fprintf(buf, "```sh\n%s\n```\n\n", cmd.Example)
 	}
 
 	if cmd.HasSubCommands() {
@@ -116,7 +116,7 @@ func CustomGenMarkdown(cmd *cobra.Command, w io.Writer) error {
 			cname := name + " " + child.Name()
 			link := cname + markdownExtension
 			link = strings.ReplaceAll(link, " ", "-")
-			buf.WriteString(fmt.Sprintf("* [%s](%s)\t - %s\n", cname, link, child.Short))
+			fmt.Fprintf(buf, "* [%s](%s)\t - %s\n", cname, link, child.Short)
 		}
 		buf.WriteString("\n")
 	}
