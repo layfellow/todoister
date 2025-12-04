@@ -13,11 +13,14 @@ func stripMarkdown(input string) string {
 	// Strip Markdown bold (**...**)
 	boldRegex := regexp.MustCompile(`\*\*(.*?)\*\*`)
 	// Strip Markdown inline code (`...`)
-	codeRegex := regexp.MustCompile("`(.*?)`")
+	backtickRegex := regexp.MustCompile("`(.*?)`")
+	// Strip HTML inline code (<code>...</code>)
+	codeRegex := regexp.MustCompile(`<code>(.*?)</code>`)
 	// Strip '- ' after a newline
 	newlineDashRegex := regexp.MustCompile(`(?m)^\- `)
 
 	result := boldRegex.ReplaceAllString(input, "$1")
+	result = backtickRegex.ReplaceAllString(result, "$1")
 	result = codeRegex.ReplaceAllString(result, "$1")
 	result = newlineDashRegex.ReplaceAllString(result, "")
 

@@ -17,9 +17,9 @@ var addProjectCmd = &cobra.Command{
 	Use:   "project [flags] [PARENT/.../]NAME",
 	Short: "Add a new project",
 	Long: "Add a new project to Todoist.\n\n" +
-		"`NAME` is the name of the project to create.\n" +
-		"Use `PARENT/NAME` to create a project within a parent project.\n" +
-		"Use `PARENT/SUBPARENT/NAME` for nested parents.\n",
+		"<code>NAME</code> is the name of the project to create.\n" +
+		"Use <code>PARENT/NAME</code> to create a project within a parent project.\n" +
+		"Use <code>PARENT/SUBPARENT/NAME</code> for nested parents.\n",
 	Example: "# Add a root-level project:\n" +
 		"todoister add project \"Shopping\"\n\n" +
 		"# Add a project within a parent:\n" +
@@ -77,10 +77,10 @@ var addTaskCmd = &cobra.Command{
 	Use:   "task [flags] [#][PARENT/.../PROJECT] TASK",
 	Short: "Add a new task to a project",
 	Long: "Add a new task to a Todoist project.\n\n" +
-		"Use `#[PARENT/SUBPARENT.../]PROJECT` to specify the project name with optional\n" +
-		"`PARENT` and `SUBPARENTS` (note the '`#`' character prefix and the single quotes).\n\n" +
-		"Alternatively, you can use the `--project` flag to specify the project name\n" +
-		"and omit the '`#`' prefix and the quotes.\n",
+		"Use <code>#[PARENT/SUBPARENT.../]PROJECT</code> to specify the project name with optional\n" +
+		"<code>PARENT</code> and <code>SUBPARENTS</code> (note the '<code>#</code>' character prefix and the single quotes).\n\n" +
+		"Alternatively, you can use the <code>--project</code> flag to specify the project name\n" +
+		"and omit the '<code>#</code>' prefix and the quotes.\n",
 	Example: "# Add task to root-level project Work:\n" +
 		"todoister add task '#Work' 'Complete report'\n\n" +
 		"# Add task to project Reports of project Work:\n" +

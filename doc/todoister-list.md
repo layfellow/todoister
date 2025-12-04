@@ -6,9 +6,9 @@ todoister list [flags] [NAME]...
 
 List projects and subprojects.
 
-`NAME` is the name of one or more projects to list tasks from.
-If no `NAME` is given, all projects are listed.
-You can specify a project name by its full path, e.g., `Work/Project`.
+<code>NAME</code> is the name of one or more projects to list tasks from.
+If no <code>NAME</code> is given, all projects are listed.
+You can specify a project name by its full path, e.g., <code>Work/Project</code>.
 Names are case-insensitive.
 
 

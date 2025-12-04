@@ -14,7 +14,7 @@ var exportCmd = &cobra.Command{
 	Use:   "export [flags] [PATH]",
 	Short: "Export projects in JSON or YAML format",
 	Long: "Export all Todoist projects as a tree of JSON or YAML files.\n\n" +
-		"- `PATH` is a file or directory where to export the projects, by default `index.json`.\n",
+		"- <code>PATH</code> is a file or directory where to export the projects, by default <code>index.json</code>.\n",
 	Example: "# Export to a single index.json file in the current directory:\n" +
 		"todoister export\n\n" +
 		"# Export to todoist.json file in the home directory:\n" +

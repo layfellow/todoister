@@ -6,9 +6,9 @@ todoister add project [flags] [PARENT/.../]NAME
 
 Add a new project to Todoist.
 
-`NAME` is the name of the project to create.
-Use `PARENT/NAME` to create a project within a parent project.
-Use `PARENT/SUBPARENT/NAME` for nested parents.
+<code>NAME</code> is the name of the project to create.
+Use <code>PARENT/NAME</code> to create a project within a parent project.
+Use <code>PARENT/SUBPARENT/NAME</code> for nested parents.
 
 
 ### Flags:

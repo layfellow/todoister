@@ -6,7 +6,7 @@ todoister export [flags] [PATH]
 
 Export all Todoist projects as a tree of JSON or YAML files.
 
-- `PATH` is a file or directory where to export the projects, by default `index.json`.
+- <code>PATH</code> is a file or directory where to export the projects, by default <code>index.json</code>.
 
 
 ### Flags:

@@ -20,8 +20,8 @@ var tasksCmd = &cobra.Command{
 	Aliases: []string{"items"},
 	Short:   "List project tasks",
 	Long: "List project tasks.\n\n" +
-		"`NAME` is the name of one or more projects to list tasks from.\n" +
-		"You can specify a project name by its full path, e.g., `Work/Project`.\n" +
+		"<code>NAME</code> is the name of one or more projects to list tasks from.\n" +
+		"You can specify a project name by its full path, e.g., <code>Work/Project</code>.\n" +
 		"Names are case-insensitive.\n",
 	Example: "# List tasks for project Life:\n" +
 		"todoister tasks Life\n\n" +

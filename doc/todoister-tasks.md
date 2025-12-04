@@ -6,8 +6,8 @@ todoister tasks [flags] NAME...
 
 List project tasks.
 
-`NAME` is the name of one or more projects to list tasks from.
-You can specify a project name by its full path, e.g., `Work/Project`.
+<code>NAME</code> is the name of one or more projects to list tasks from.
+You can specify a project name by its full path, e.g., <code>Work/Project</code>.
 Names are case-insensitive.
 
 
