@@ -21,8 +21,9 @@ type Project struct {
 
 type TodoistProject struct {
 	Project
-	ID       string `json:"id"`
-	ParentID string `json:"parent_id"`
+	ID        string `json:"id"`
+	ParentID  string `json:"parent_id"`
+	IsDeleted bool   `json:"is_deleted"`
 }
 
 type ExportedProject struct {
@@ -45,6 +46,7 @@ type TodoistSection struct {
 	ID        string `json:"id"`
 	ProjectID string `json:"project_id"`
 	Order     int    `json:"order"`
+	IsDeleted bool   `json:"is_deleted"`
 }
 
 type ExportedSection struct {
@@ -71,6 +73,7 @@ type TodoistItem struct {
 	Labels    []string  `json:"labels"`
 	Duration  *Duration `json:"duration"`
 	Due       *Due      `json:"due"`
+	IsDeleted bool      `json:"is_deleted"`
 }
 
 type ExportedTask struct {
@@ -90,7 +93,8 @@ type Label struct {
 
 type TodoistLabel struct {
 	Label
-	ID string `json:"id"`
+	ID        string `json:"id"`
+	IsDeleted bool   `json:"is_deleted"`
 }
 
 type ExportedLabel struct {
@@ -108,6 +112,7 @@ type TodoistComment struct {
 	ID        string `json:"id"`
 	TaskID    string `json:"task_id"`
 	ProjectID string `json:"project_id"`
+	IsDeleted bool   `json:"is_deleted"`
 }
 
 type ExportedComment struct {

@@ -231,32 +231,86 @@ func mergeData(cached *TodoistData, incremental *SyncResponse) *TodoistData {
 
 	// Merge Projects (updates and additions, filter out deletions)
 	for _, p := range incremental.Projects {
-		// Note: is_deleted is not exposed in our simplified struct,
-		// so we treat all incremental items as updates/additions
-		projectMap[p.ID] = p
+		if p.IsDeleted {
+			delete(projectMap, p.ID)
+		} else {
+			projectMap[p.ID] = p
+		}
 	}
 
 	// Merge Sections
 	for _, s := range incremental.Sections {
-		sectionMap[s.ID] = s
+		if s.IsDeleted {
+			delete(sectionMap, s.ID)
+		} else {
+			sectionMap[s.ID] = s
+		}
 	}
 
 	// Merge Items
 	for _, i := range incremental.Items {
-		itemMap[i.ID] = i
+		if i.IsDeleted {
+			delete(itemMap, i.ID)
+		} else {
+			itemMap[i.ID] = i
+		}
 	}
 
 	// Merge Labels
 	for _, l := range incremental.Labels {
-		labelMap[l.ID] = l
+		if l.IsDeleted {
+			delete(labelMap, l.ID)
+		} else {
+			labelMap[l.ID] = l
+		}
 	}
 
 	// Merge Comments (both notes and project_notes)
 	for _, c := range incremental.Notes {
-		commentMap[c.ID] = c
+		if c.IsDeleted {
+			delete(commentMap, c.ID)
+		} else {
+			commentMap[c.ID] = c
+		}
 	}
 	for _, c := range incremental.ProjectNotes {
-		commentMap[c.ID] = c
+		if c.IsDeleted {
+			delete(commentMap, c.ID)
+		} else {
+			commentMap[c.ID] = c
+		}
+	}
+
+	// Clean up orphaned items
+	// Remove sections that belong to deleted projects
+	for id, s := range sectionMap {
+		if _, exists := projectMap[s.ProjectID]; !exists {
+			delete(sectionMap, id)
+		}
+	}
+
+	// Remove items that belong to deleted projects or sections
+	for id, i := range itemMap {
+		if _, exists := projectMap[i.ProjectID]; !exists {
+			delete(itemMap, id)
+		} else if i.SectionID != "" {
+			if _, exists := sectionMap[i.SectionID]; !exists {
+				delete(itemMap, id)
+			}
+		}
+	}
+
+	// Remove comments that belong to deleted items or projects
+	for id, c := range commentMap {
+		if c.TaskID != "" {
+			if _, exists := itemMap[c.TaskID]; !exists {
+				delete(commentMap, id)
+			}
+		} else if c.ProjectID != "" {
+			if _, exists := projectMap[c.ProjectID]; !exists {
+				delete(commentMap, id)
+			}
+		}
 	}
 
 	// Convert maps back to slices
