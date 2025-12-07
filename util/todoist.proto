@@ -1,0 +1,84 @@
+// Copyright 2025 layfellow. All rights reserved.
+// Use of this source code is governed by an MIT license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package util;
+
+option go_package = "github.com/layfellow/todoister/util";
+
+// PbDuration represents a task's duration in the cache
+message PbDuration {
+  int32 amount = 1;
+  string unit = 2;
+}
+
+// PbDue represents a task's due date in the cache
+message PbDue {
+  string date = 1;
+  bool is_recurring = 2;
+  string due_string = 3;  // Renamed from 'string' to avoid conflict
+  string datetime = 4;
+  string timezone = 5;
+}
+
+// PbProject represents a Todoist project in the cache
+message PbProject {
+  string id = 1;
+  string parent_id = 2;
+  string name = 3;
+  string color = 4;
+  string view_style = 5;
+}
+
+// PbSection represents a Todoist section in the cache
+message PbSection {
+  string id = 1;
+  string project_id = 2;
+  string name = 3;
+  bool collapsed = 4;
+  int32 order = 5;
+}
+
+// PbItem represents a Todoist task/item in the cache
+message PbItem {
+  string id = 1;
+  string project_id = 2;
+  string section_id = 3;
+  string content = 4;
+  string description = 5;
+  int32 priority = 6;
+  int32 child_order = 7;
+  bool collapsed = 8;
+  repeated string labels = 9;
+  PbDuration duration = 10;
+  PbDue due = 11;
+  string completed_at = 12;
+}
+
+// PbLabel represents a Todoist label in the cache
+message PbLabel {
+  string id = 1;
+  string name = 2;
+  string color = 3;
+}
+
+// PbComment represents a Todoist comment (note) in the cache
+message PbComment {
+  string id = 1;
+  string task_id = 2;
+  string project_id = 3;
+  string content = 4;
+}
+
+// CachedTodoistData is the main cache structure
+message CachedTodoistData {
+  string sync_token = 1;
+  int64 cached_at = 2;
+  repeated PbProject projects = 3;
+  repeated PbSection sections = 4;
+  repeated PbItem items = 5;
+  repeated PbLabel labels = 6;
+  repeated PbComment comments = 7;
+}

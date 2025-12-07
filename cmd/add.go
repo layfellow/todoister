@@ -88,9 +88,9 @@ var addProjectCmd = &cobra.Command{
 		if len(parts) > 1 {
 			parentPath = strings.Join(parts[:len(parts)-1], "/")
 
-			// Fetch only projects and find the parent ID (lightweight operation)
-			projects := util.GetProjects(ConfigValue.Token)
-			parentID = util.GetProjectIDByPathFromProjects(parentPath, projects)
+			// Fetch Todoist data and find the parent ID
+			todoistData := util.GetTodoistData(ConfigValue.Token)
+			parentID = util.GetProjectIDByPathFromProjects(parentPath, todoistData.Projects)
 
 			if parentID == "" {
 				util.Die(fmt.Sprintf("Parent project '%s' not found", parentPath), nil)
@@ -154,12 +154,13 @@ var addTaskCmd = &cobra.Command{
 		var parentPath string
 		var projectID string
 
-		// If there are parent parts, we need to find the parent project ID
+		// Fetch Todoist data and find the project ID
+		todoistData := util.GetTodoistData(ConfigValue.Token)
+		projects := todoistData.Projects
+
+		// If there are parent parts, we need to find the project by path
 		if len(parts) > 1 {
 			parentPath = strings.Join(parts[:len(parts)-1], "/")
-
-			// Fetch only projects and find the project ID (lightweight operation)
-			projects := util.GetProjects(ConfigValue.Token)
 			projectID = util.GetProjectIDByPathFromProjects(projectPath, projects)
 
 			if projectID == "" {
@@ -167,7 +168,6 @@ var addTaskCmd = &cobra.Command{
 			}
 		} else {
 			// Single project name - find it by name
-			projects := util.GetProjects(ConfigValue.Token)
 			for _, proj := range projects {
 				if strings.EqualFold(proj.Name, projectName) && proj.ParentID == "" {
 					projectID = proj.ID

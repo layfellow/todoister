@@ -15,6 +15,9 @@ go build -ldflags="-X 'github.com/layfellow/todoister/cmd.Version=0.3.0'" -o bui
 
 # Build all platform binaries
 make build
+
+# Regenerate protobuf code (if modifying todoist.proto)
+protoc --go_out=. --go_opt=paths=source_relative util/todoist.proto
 ```
 
 ### Testing
@@ -52,7 +55,10 @@ make clean         # Remove build directory
   - `version.go`: Version command
   - `*_test.go`: Command tests
 - **`util/`**: Core utility functions
-  - `api.go`: Todoist REST API v1 client functions
+  - `api.go`: Todoist Sync API v1 client functions
+  - `cache.go`: Protobuf cache management (load/save)
+  - `sync.go`: Data conversion between cache and application formats, incremental merge logic
+  - `todoist.proto`: Protobuf schema for cache (generates `todoist.pb.go`)
   - `parser.go`: Data structure definitions and hierarchical parsing
   - `writer.go`: JSON/YAML export with directory tree generation
   - `config.go`: Configuration file and environment variable handling
@@ -63,12 +69,13 @@ make clean         # Remove build directory
 
 ### Data Flow
 
-1. **API Data Retrieval** (`util/api.go`):
-   - `GetTodoistData()` fetches all projects, sections, tasks, labels, and comments from Todoist API v1
-   - `GetProjects()` is a lightweight alternative that fetches only project data
-   - All API endpoints use `getAllPaginated()` to handle both paginated and non-paginated responses
-   - `CreateTask()` makes POST requests to create new tasks
-   - `createProject()` (in `cmd/add.go`) makes POST requests to create new projects
+1. **API Data Retrieval with Caching** (`util/api.go`, `util/cache.go`, `util/sync.go`):
+   - `GetTodoistData()` uses the Todoist Sync API v1 endpoint with local Protobuf caching
+   - On first run: Performs full sync (`sync_token="*"`) and caches data to `~/.cache/todoister/todoist.pb`
+   - On subsequent runs: Performs incremental sync using cached `sync_token`, fetching only changes
+   - Cache format: Protocol Buffers (see `util/todoist.proto`)
+   - Sync request fetches all data in one HTTP call: projects, sections, items, labels, notes, project_notes
+   - `CreateTask()` and `CreateProject()` still use REST API POST endpoints for writes
 
 2. **Data Transformation** (`util/parser.go`):
    - `HierarchicalData()` converts flat Todoist API data into nested `ExportedProject` structures
@@ -117,6 +124,16 @@ Commands that reference projects accept hierarchical paths:
 The `add task` command uses `#` prefix for project paths in positional arguments:
 - `todoister add task '#Work/Reports' 'Task title'`
 - Or use the `--project` flag: `todoister add task -p Work/Reports 'Task title'`
+
+### Cache Management
+
+The application uses a local Protobuf cache for performance:
+
+- **Cache location**: `~/.cache/todoister/todoist.pb` (or `$XDG_CACHE_HOME/todoister/todoist.pb`)
+- **First run**: Performs full sync and creates cache
+- **Subsequent runs**: Incremental sync fetches only changes since last sync
+- **Cache corruption**: Automatically falls back to full sync
+- **Clear cache**: Delete `~/.cache/todoister/todoist.pb` to force full resync
 
 ### Color Values for Projects
 
