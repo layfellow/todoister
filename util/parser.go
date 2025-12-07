@@ -151,6 +151,28 @@ func GetTasksByProjectID(projectID string, todoistData *TodoistData) *[]TodoistI
 	return &tasks
 }
 
+// FindTasksByPrefix finds tasks in a project whose content starts with the given prefix.
+//   - projectID: the project ID to search in
+//   - prefix: the content prefix to match (case-insensitive)
+//   - todoistData: pointer to TodoistData struct
+//
+// Returns a slice of matching TodoistItem structs.
+func FindTasksByPrefix(projectID, prefix string, todoistData *TodoistData) []TodoistItem {
+	matches := make([]TodoistItem, 0)
+	lowerPrefix := strings.ToLower(prefix)
+
+	for _, item := range todoistData.Items {
+		if item.ProjectID == projectID {
+			// Only match incomplete tasks (CompletedAt is empty string)
+			if item.CompletedAt == "" && strings.HasPrefix(strings.ToLower(item.Content), lowerPrefix) {
+				matches = append(matches, item)
+			}
+		}
+	}
+
+	return matches
+}
+
 // GetProjectIDByName returns the project ID for a given project name.
 //   - name: the project name
 //   - todoistData: pointer to TodoistData struct as returned by the API

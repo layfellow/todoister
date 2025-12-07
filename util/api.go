@@ -1,10 +1,12 @@
 package util
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -58,17 +60,12 @@ type SyncResponse struct {
 func makeSyncRequest(token, syncToken string, resourceTypes []string) (*SyncResponse, error) {
 	client := &http.Client{}
 
-	// Build form data
-	formData := fmt.Sprintf("sync_token=%s&resource_types=%s",
-		syncToken,
-		strings.ReplaceAll(strings.Join(resourceTypes, "\",\""), ",", ","))
-
 	// Construct proper JSON array for resource_types
 	resourceTypesJSON, err := json.Marshal(resourceTypes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal resource types: %w", err)
 	}
-	formData = fmt.Sprintf("sync_token=%s&resource_types=%s", syncToken, string(resourceTypesJSON))
+	formData := fmt.Sprintf("sync_token=%s&resource_types=%s", syncToken, string(resourceTypesJSON))
 
 	req, err := http.NewRequest("POST", TodoistSyncURL, strings.NewReader(formData))
 	if err != nil {
@@ -299,4 +296,70 @@ func CreateProject(token, name, parentID, color string) (*ProjectResponse, error
 	}
 
 	return &project, nil
+}
+
+// CompleteTask closes/completes a task using the Sync API item_close command.
+//   - token: Todoist API token
+//   - taskID: The task ID to close
+//
+// Returns an error if the request fails.
+func CompleteTask(token, taskID string) error {
+	client := &http.Client{}
+
+	// Generate UUID for command
+	uuid := generateUUID()
+
+	// Build Sync API command
+	commands := []map[string]interface{}{
+		{
+			"type": "item_close",
+			"uuid": uuid,
+			"args": map[string]string{
+				"id": taskID,
+			},
+		},
+	}
+
+	commandsJSON, err := json.Marshal(commands)
+	if err != nil {
+		return fmt.Errorf("failed to marshal commands: %w", err)
+	}
+
+	// Build form data
+	formData := fmt.Sprintf("commands=%s", url.QueryEscape(string(commandsJSON)))
+
+	req, err := http.NewRequest("POST", TodoistSyncURL, strings.NewReader(formData))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to complete task: %w", err)
+	}
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			Warn("Failed to close response body", cerr)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("API returned status %d: %s", resp.StatusCode, string(body))
+	}
+
+	return nil
+}
+
+// generateUUID generates a simple UUID for Sync API commands
+func generateUUID() string {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		// crypto/rand.Read should never fail, but handle it anyway
+		Warn("Failed to generate UUID, using fallback", err)
+	}
+	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:16])
 }

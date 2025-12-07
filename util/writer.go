@@ -2,10 +2,11 @@ package util
 
 import (
 	"encoding/json"
-	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // ExportFormat is either JSON or YAML.
@@ -167,11 +168,6 @@ func writeProject(dirname string, basename string, format ExportFormat, depth in
 // - path: the path to write to
 func WriteHierarchicalData(roots []*ExportedProject, format ExportFormat, depth int, path string) error {
 	dirname, basename, err := normalizePathnames(path, format)
-
-	// DEBUG
-	println("format: ", format)
-	println("dirname: ", dirname)
-	println("basename: ", basename)
 
 	if err != nil {
 		return err
