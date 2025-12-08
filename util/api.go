@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const (
@@ -174,10 +175,22 @@ type TaskResponse struct {
 	ProjectID string `json:"project_id"`
 }
 
+// DateParams holds the parsed date parameters for task creation
+type DateParams struct {
+	DueDate     string // YYYY-MM-DD format
+	DueDateTime string // YYYY-MM-DDTHH:MM:SS format (no timezone)
+	DueString   string // Natural language string
+	DueLang     string // Language code, default "en"
+}
+
 // TaskCreateRequest represents the request body for creating a task via REST API
 type TaskCreateRequest struct {
-	Content   string `json:"content"`
-	ProjectID string `json:"project_id,omitempty"`
+	Content     string `json:"content"`
+	ProjectID   string `json:"project_id,omitempty"`
+	DueDate     string `json:"due_date,omitempty"`
+	DueDateTime string `json:"due_datetime,omitempty"`
+	DueString   string `json:"due_string,omitempty"`
+	DueLang     string `json:"due_lang,omitempty"`
 }
 
 // ProjectCreateRequest represents the request body for creating a project
@@ -195,13 +208,58 @@ type ProjectResponse struct {
 	Color    string `json:"color"`
 }
 
+// ParseDateInput analyzes a date string and returns appropriate API parameters
+// Returns nil if input is empty, indicating no due date
+func ParseDateInput(dateInput string) (*DateParams, error) {
+	dateInput = strings.TrimSpace(dateInput)
+
+	if dateInput == "" {
+		return nil, nil
+	}
+
+	// Try date-only format (YYYY-MM-DD)
+	if t, err := time.Parse("2006-01-02", dateInput); err == nil {
+		return &DateParams{DueDate: t.Format("2006-01-02")}, nil
+	}
+
+	// Try datetime formats (in order of specificity)
+	dateTimeFormats := []string{
+		"2006-01-02T15:04:05", // ISO with seconds
+		"2006-01-02T15:04",    // ISO without seconds
+		"2006-01-02 15:04:05", // Space-separated with seconds
+		"2006-01-02 15:04",    // Space-separated without seconds
+	}
+
+	for _, format := range dateTimeFormats {
+		if t, err := time.Parse(format, dateInput); err == nil {
+			// Normalize to YYYY-MM-DDTHH:MM:SS (no timezone)
+			normalized := t.Format("2006-01-02T15:04:05")
+			return &DateParams{DueDateTime: normalized}, nil
+		}
+	}
+
+	// Fallback to natural language
+	return &DateParams{
+		DueString: dateInput,
+		DueLang:   "en",
+	}, nil
+}
+
 // CreateTask makes a POST request to create a new task using the REST API v1
-func CreateTask(token, content, projectID string) (*TaskResponse, error) {
+func CreateTask(token, content, projectID string, dateParams *DateParams) (*TaskResponse, error) {
 	client := &http.Client{}
 
 	reqBody := TaskCreateRequest{
 		Content:   content,
 		ProjectID: projectID,
+	}
+
+	// Add due date parameters if provided
+	if dateParams != nil {
+		reqBody.DueDate = dateParams.DueDate
+		reqBody.DueDateTime = dateParams.DueDateTime
+		reqBody.DueString = dateParams.DueString
+		reqBody.DueLang = dateParams.DueLang
 	}
 
 	bodyBytes, err := json.Marshal(reqBody)

@@ -56,12 +56,21 @@ todoister add task -p Work/Reports 'Create monthly report'
 todoister add task -p Personal 'Buy groceries'
 
 # Add task to nested project using flag:
-todoister add task --project=Personal/Shopping/List 'Buy milk'`
+todoister add task --project=Personal/Shopping/List 'Buy milk'
+
+# Add task with due date:
+todoister add task -p Work -d '2026-01-15' 'Submit report'
+todoister add task -p Work -d 'Jan. 16' 'Submit another report'
+todoister add task -p Work --date='2026-01-16' 'Submit yet another report'
+todoister add task -p Work -d 'next tuesday 14:00' 'Team meeting'
+todoister add task -p Personal -d 'tomorrow' 'Call dentist'
+todoister add task -p Personal --date='every friday' 'Weekly review'`
 )
 
 var (
 	projectColor string
 	projectFlag  string
+	dateFlag     string
 )
 
 var addProjectCmd = &cobra.Command{
@@ -105,9 +114,9 @@ var addProjectCmd = &cobra.Command{
 
 		// Print success message
 		if parentPath != "" {
-			fmt.Printf("Created project '%s' in '%s' (ID: %s)\n", project.Name, parentPath, project.ID)
+			fmt.Printf("Created project '%s' in '%s'\n", project.Name, parentPath)
 		} else {
-			fmt.Printf("Created project '%s' (ID: %s)\n", project.Name, project.ID)
+			fmt.Printf("Created project '%s'\n", project.Name)
 		}
 	},
 }
@@ -180,17 +189,27 @@ var addTaskCmd = &cobra.Command{
 			}
 		}
 
-		// Create the task
-		task, err := util.CreateTask(ConfigValue.Token, taskTitle, projectID)
+		// Parse date if provided
+		var dateParams *util.DateParams
+		if dateFlag != "" {
+			var err error
+			dateParams, err = util.ParseDateInput(dateFlag)
+			if err != nil {
+				util.Die(fmt.Sprintf("Invalid date format: %s", dateFlag), err)
+			}
+		}
+
+		// Create the task with date parameters
+		task, err := util.CreateTask(ConfigValue.Token, taskTitle, projectID, dateParams)
 		if err != nil {
 			util.Die("Failed to create task", err)
 		}
 
 		// Print success message
 		if parentPath != "" {
-			fmt.Printf("Created task '%s' in '%s/%s' (ID: %s)\n", task.Content, parentPath, projectName, task.ID)
+			fmt.Printf("Created task '%s' in '%s/%s'\n", task.Content, parentPath, projectName)
 		} else {
-			fmt.Printf("Created task '%s' in '%s' (ID: %s)\n", task.Content, projectName, task.ID)
+			fmt.Printf("Created task '%s' in '%s'\n", task.Content, projectName)
 		}
 	},
 }
@@ -208,6 +227,8 @@ func init() {
 
 	addTaskCmd.Flags().StringVarP(&projectFlag, "project", "p", "",
 		"project name or path (e.g., 'Work' or 'Work/Reports')")
+	addTaskCmd.Flags().StringVarP(&dateFlag, "date", "d", "",
+		"due date (YYYY-MM-DD, YYYY-MM-DD HH:MM, or a string like 'tomorrow',\nsee https://www.todoist.com/help/articles/introduction-to-dates-and-time\nfor help on how to write natural language dates )")
 	addTaskCmd.SetHelpFunc(util.CustomHelpFunc)
 
 	addCmd.AddCommand(addProjectCmd)
