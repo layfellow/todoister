@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/layfellow/todoister/util"
 	"github.com/spf13/cobra"
@@ -27,7 +28,31 @@ todoister tasks Life Work/Project`
 
 func printTasks(tasks []*util.ExportedTask) {
 	for _, task := range tasks {
-		fmt.Printf("  - %s\n", task.Content)
+		if task.Due != nil && task.Due.Datetime != "" {
+			// Task has a specific datetime in the Datetime field
+			dueStr := task.Due.Datetime
+			// Try RFC3339 first, then without timezone
+			if t, err := time.Parse(time.RFC3339, task.Due.Datetime); err == nil {
+				dueStr = t.Format("Jan 2, 2006, 3:04 PM")
+			} else if t, err := time.Parse("2006-01-02T15:04:05", task.Due.Datetime); err == nil {
+				dueStr = t.Format("Jan 2, 2006, 3:04 PM")
+			}
+			fmt.Printf("  - %s (%s)\n", task.Content, dueStr)
+		} else if task.Due != nil && task.Due.Date != "" {
+			// Task has a Date field - may contain date-only or datetime
+			dueStr := task.Due.Date
+			// Check if Date field contains a datetime (API sometimes puts datetime here)
+			if t, err := time.Parse("2006-01-02T15:04:05", task.Due.Date); err == nil {
+				dueStr = t.Format("Jan 2, 2006, 3:04 PM")
+			} else if t, err := time.Parse(time.RFC3339, task.Due.Date); err == nil {
+				dueStr = t.Format("Jan 2, 2006, 3:04 PM")
+			} else if t, err := time.Parse("2006-01-02", task.Due.Date); err == nil {
+				dueStr = t.Format("Jan 2, 2006")
+			}
+			fmt.Printf("  - %s (%s)\n", task.Content, dueStr)
+		} else {
+			fmt.Printf("  - %s\n", task.Content)
+		}
 		if task.Description != "" {
 			fmt.Printf("%s\n\n", util.IndentMultilineString(task.Description, 4))
 		}
