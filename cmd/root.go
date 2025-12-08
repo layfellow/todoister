@@ -25,6 +25,7 @@ var RootCmd = &cobra.Command{
 }
 
 func initAll() {
+	util.SchemaVersion = Version
 	util.InitConfig(&ConfigValue)
 	util.InitLogger(ConfigValue.Name)
 }
