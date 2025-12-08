@@ -1,13 +1,13 @@
 ## todoister add
 
-Añade un nuevo recurso a Todoist (actualmente: project, task).
+Añade un nuevo recurso a Todoist (actualmente admite: project, task).
 
 
-### Flags globales:
+### Opciones globales:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
-  <dd>usa <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
+  <dd>utiliza <code>&lt;string&gt;</code> como token de API de Todoist</dd>
 </dl>
 
 ### Comandos

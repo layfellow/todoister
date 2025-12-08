@@ -4,19 +4,19 @@
 todoister list [flags] [NAME]...
 ```
 
-Listar proyectos y subproyectos.
+Lista proyectos y subproyectos.
 
-`NAME` es el nombre de uno o más proyectos de los cuales listar tareas.
-Si no se proporciona `NAME`, se listan todos los proyectos.
-Puede especificar el nombre de un proyecto por su ruta completa, por ejemplo, `Work/Project`.
+<code>NAME</code> es el nombre de uno o más proyectos de los cuales listar tareas.
+Si no se especifica <code>NAME</code>, se listan todos los proyectos.
+Puede especificar el nombre de un proyecto mediante su ruta completa, por ejemplo, <code>Work/Project</code>.
 Los nombres no distinguen entre mayúsculas y minúsculas.
 
 
-### Flags globales:
+### Opciones globales:
 
 <dl>
   <dt><code>-t</code>, <code>--token</code> <code>&lt;string&gt;</code></dt>
-  <dd>usa <code>&lt;string&gt;</code> como token de la API de Todoist</dd>
+  <dd>utilizar <code>&lt;string&gt;</code> como token de API de Todoist</dd>
 </dl>
 
 ### Ejemplos
