@@ -1,5 +1,5 @@
-// Copyright 2025 layfellow. All rights reserved.
-// Use of this source code is governed by an MIT license
+// Copyright 2025 Marco Bravo Mejías. All rights reserved.
+// Use of this source code is governed by a GPL v3 license
 // that can be found in the LICENSE file.
 
 package util
