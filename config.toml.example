@@ -7,7 +7,7 @@ token = ""
 name = ""
 
 # Argument and options for `todoister export`.
-# Defaults are current directory, json, 0 depth
+# Defaults are path: current directory, format: json, depth: 0
 [export]
 path = ""
 format = ""

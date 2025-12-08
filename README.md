@@ -48,7 +48,28 @@ Then write a `~/.config/todoister/config.toml` or  `~/.todoister.toml` file and 
 token = "your-todoist-API-token"
 ```
 
-Alternatively, set an environment variable:
+The full format of the configuration file is:
+
+```toml
+# You should at least set this.
+token = ""
+
+# Log file when running non-interactively.
+# Default is $HOME/.cache/todoister/out.log
+[log]
+name = ""
+
+# Argument and options for `todoister export`.
+# Defaults are path: current directory, format: json, depth: 0
+[export]
+path = ""
+format = ""
+depth = 0
+```
+
+## Configuration alternatives
+
+Instead of a configuration file, you can use an environment variable for the token:
 
 ```sh
 $ export TODOIST_TOKEN='your-todoist-API-token'
@@ -62,7 +83,7 @@ The `--token` option takes precedence over the environment variable, which in tu
 configuration file.
 
 
-## Cron job
+## Unattended export
 
 You can run `todoister export` in a cron job as a way create automatic Todoist backups in a
 sane format. You can set the export options in the configuration file, so you don’t have
@@ -91,7 +112,7 @@ When running as a cron job, `todoister export` logs its activity to a log file a
 name = "/path/to/log/file.log"
 ```
 
-Check the provided `config.toml.example`.
+## Log format
 
 Logs follow the
 [structured logging](https://pkg.go.dev/log/slog) format and are auto-rotated.

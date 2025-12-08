@@ -47,11 +47,33 @@ Luego escriba un archivo `~/.config/todoister/config.toml` o `~/.todoister.toml`
 token = "su-token-de-API-de-todoist"
 ```
 
-Alternativamente, establezca una variable de entorno:
+El formato completo del archivo de configuración es:
+
+```toml
+# Establezca aquí el token.
+token = ""
+
+# Archivo de log para ejecución no interactiva.
+# El valor predeterminado es $HOME/.cache/todoister/out.log
+[log]
+name = ""
+
+# Argumento y opciones para `todoister export`.
+# Los valores predeterminados son path: directorio actual, format: json, depth: 0.
+[export]
+path = ""
+format = ""
+depth = 0
+```
+
+## Alternativas de configuración
+
+En lugar de un archivo de configuración, puede utilizar una variable de entorno para el token:
 
 ```sh
 $ export TODOIST_TOKEN='su-token-de-API-de-todoist'
 ```
+
 O pase el token directamente a través de la línea de comandos:
 
 ```sh
@@ -59,7 +81,7 @@ $ todoister --token='su-token-de-API-de-todoist' comando ...
 ```
 La opción `--token` tiene prioridad sobre la variable de entorno, que a su vez tiene precedencia sobre el archivo de configuración.
 
-## Cron job
+## Exportación automática
 
 Es posible ejecutar `todoister export` en un cron job como una forma de crear respaldos automáticos de Todoist en un formato legible.
 Puede establecer las opciones de exportación directamente en el archivo de configuración `config.toml`, para que no tenga que editar el cron tab.
@@ -83,14 +105,14 @@ Cuando se ejecuta como un cron job, `todoister export` registra su actividad en 
 
 ```toml
 [log]
-name = "/ruta/al/archivo/de/registro.log"
+name = "/ruta/al/archivo.log"
 ```
 
-Consulte el archivo de ejemplo `config.toml.example` para más detalles.
+## Formato de log
 
-Los registros siguen el formato de
-[registro estructurado](https://pkg.go.dev/log/slog) y se rotan automáticamente.
-No se escriben registros en modo interactivo.
+Los logs siguen el formato de
+[log estructurado](https://pkg.go.dev/log/slog) y se rotan automáticamente.
+No se escriben logs en modo interactivo.
 
 ## Comandos
 
