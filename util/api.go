@@ -421,3 +421,60 @@ func generateUUID() string {
 	}
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:16])
 }
+
+// DeleteProject deletes a project using the Sync API project_delete command.
+//   - token: Todoist API token
+//   - projectID: The project ID to delete
+//
+// Returns an error if the request fails.
+// Note: This deletes the project and all its descendants.
+func DeleteProject(token, projectID string) error {
+	client := &http.Client{}
+
+	// Generate UUID for command
+	uuid := generateUUID()
+
+	// Build Sync API command
+	commands := []map[string]interface{}{
+		{
+			"type": "project_delete",
+			"uuid": uuid,
+			"args": map[string]string{
+				"id": projectID,
+			},
+		},
+	}
+
+	commandsJSON, err := json.Marshal(commands)
+	if err != nil {
+		return fmt.Errorf("failed to marshal commands: %w", err)
+	}
+
+	// Build form data
+	formData := fmt.Sprintf("commands=%s", url.QueryEscape(string(commandsJSON)))
+
+	req, err := http.NewRequest("POST", TodoistSyncURL, strings.NewReader(formData))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to delete project: %w", err)
+	}
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			Warn("Failed to close response body", cerr)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("API returned status %d: %s", resp.StatusCode, string(body))
+	}
+
+	return nil
+}
