@@ -9,6 +9,8 @@ Eliminar un proyecto de Todoist.
 <code>NOMBRE</code> es el nombre del proyecto a eliminar.
 Utilice <code>PADRE/NOMBRE</code> para localizar un proyecto dentro de un proyecto padre.
 Utilice <code>PADRE/SUBPADRE/NOMBRE</code> para padres anidados.
+Observe que <code>NOMBRE</code>, <code>PADRE</code> y <code>SUBPADRE</code>
+no distinguen entre mayúsculas y minúsculas.
 
 Este comando elimina el proyecto y todos sus descendientes (subproyectos y tareas).
 

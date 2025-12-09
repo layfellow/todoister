@@ -11,6 +11,11 @@ Use <code>#[PARENT/SUBPARENT.../]PROJECT</code> para especificar el nombre del p
 
 Alternativamente, puede usar la opción <code>--project</code> para especificar el nombre del proyecto
 y omitir el prefijo '<code>#</code>' y las comillas.
+Observe que <code>PROJECT</code>, <code>PARENTS</code> y <code>SUBPARENTS</code>
+no distinguen entre mayúsculas y minúsculas.
+
+Se puede identificar un <code>TASK</code> con parte del nombre. Si múltiples TASKS
+coinciden con el nombre parcial, se muestra un error.
 
 Este comando elimina la tarea y todas sus subtareas.
 
@@ -39,6 +44,9 @@ todoister delete task '#Work' 'Complete report'
 
 # Eliminar tarea de un proyecto anidado:
 todoister delete task '#Work/Reports' 'Create quarterly report'
+
+# Eliminar una tarea con parte del nombre:
+todoister delete task '#Work/Reports' 'Create q'
 
 # Eliminar tarea usando la opción de proyecto:
 todoister delete task -p Work/Reports 'Create monthly report'

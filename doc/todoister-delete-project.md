@@ -9,6 +9,7 @@ Delete a project from Todoist.
 <code>NAME</code> is the name of the project to delete.
 Use <code>PARENT/NAME</code> to locate a project within a parent project.
 Use <code>PARENT/SUBPARENT/NAME</code> for nested parents.
+Note that <code>NAMES</code>, <code>PARENTS</code> and <code>SUBPARENTS</code> are case-insensitive.
 
 This command deletes the project and all its descendants (subprojects and tasks).
 

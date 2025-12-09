@@ -11,6 +11,10 @@ Use <code>#[PARENT/SUBPARENT.../]PROJECT</code> to specify the project name with
 
 Alternatively, you can use the <code>--project</code> flag to specify the project name
 and omit the '<code>#</code>' prefix and the quotes.
+Note that <code>PROJECT</code>, <code>PARENTS</code> and <code>SUBPARENTS</code> are case-insensitive.
+
+You can identify a <code>TASK</code> by its partial name. If multiple tasks match,
+an error is shown.
 
 This command deletes the task and all its sub-tasks.
 
@@ -39,6 +43,9 @@ todoister delete task '#Work' 'Complete report'
 
 # Delete task from nested project:
 todoister delete task '#Work/Reports' 'Create quarterly report'
+
+# Delete task using partial name:
+todoister delete task '#Work/Reports' 'Create q'
 
 # Delete task using project flag:
 todoister delete task -p Work/Reports 'Create monthly report'
