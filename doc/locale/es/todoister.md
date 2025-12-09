@@ -7,6 +7,7 @@ Todoister es un cliente CLI sencillo para Todoist escrito en Go.
 
 * [todoister add](todoister-add.md)	 - Añadir un nuevo recurso
 * [todoister check](todoister-check.md)	 - Marcar una tarea como completada
+* [todoister delete](todoister-delete.md)	 - Eliminar un recurso
 * [todoister export](todoister-export.md)	 - Exportar proyectos en formato JSON o YAML
 * [todoister list](todoister-list.md)	 - Listar proyectos
 * [todoister tasks](todoister-tasks.md)	 - Listar tareas de un proyecto
