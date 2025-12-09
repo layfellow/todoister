@@ -4,14 +4,13 @@
 todoister check [opciones] [#][PADRE/.../PROYECTO] TAREA
 ```
 
-Marca una TAREA en un PROYECTO como completada.
+Marca una <code>TAREA</code> en un <code>PROYECTO</code> como completada.
 
-Use #[PADRE/SUBPADRE.../]PROYECTO para especificar el nombre del proyecto con
-PADRE y SUBPADRES opcionales (note el carácter '#' como prefijo y las comillas
-simples).
+Use <code>#[PADRE/SUBPADRE.../]PROYECTO</code> para especificar el nombre del proyecto con
+<code>PADRE</code> y <code>SUBPADRES</code> opcionales (note el carácter <code>'#'</code> como prefijo y las comillas simples).
 
-Alternativamente, puede usar la opción --project para especificar el nombre del
-proyecto y omitir el prefijo '#' y las comillas.
+Alternativamente, puede usar la opción <code>--project</code> para especificar el nombre del
+proyecto y omitir el prefijo <code>'#'</code> y las comillas.
 
 El comando busca coincidencias de tareas por prefijo (sin distinguir mayúsculas
 de minúsculas). Si varias tareas coinciden, se muestra un error con una lista de

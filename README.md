@@ -67,7 +67,7 @@ format = ""
 depth = 0
 ```
 
-## Configuration alternatives
+**Configuration alternatives**
 
 Instead of a configuration file, you can use an environment variable for the token:
 
@@ -83,7 +83,7 @@ The `--token` option takes precedence over the environment variable, which in tu
 configuration file.
 
 
-## Unattended export
+## Export
 
 You can run `todoister export` in a cron job as a way create automatic Todoist backups in a
 sane format. You can set the export options in the configuration file, so you don’t have

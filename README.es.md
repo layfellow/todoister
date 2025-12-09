@@ -66,7 +66,7 @@ format = ""
 depth = 0
 ```
 
-## Alternativas de configuración
+**Alternativas de configuración**
 
 En lugar de un archivo de configuración, puede utilizar una variable de entorno para el token:
 
@@ -81,7 +81,7 @@ $ todoister --token='su-token-de-API-de-todoist' comando ...
 ```
 La opción `--token` tiene prioridad sobre la variable de entorno, que a su vez tiene precedencia sobre el archivo de configuración.
 
-## Exportación automática
+## Exportación
 
 Es posible ejecutar `todoister export` en un cron job como una forma de crear respaldos automáticos de Todoist en un formato legible.
 Puede establecer las opciones de exportación directamente en el archivo de configuración `config.toml`, para que no tenga que editar el cron tab.
