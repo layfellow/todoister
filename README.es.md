@@ -10,7 +10,8 @@ También ofrece una función de exportación mucho mejor que la copia de segurid
 la exportación de Todoister admite JSON o YAML estructurados con profundidad configurable
 para directorios anidados.
 
-Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.
+> [!NOTE]
+> Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.
 
 *Todoister aún está en desarrollo. Próximamente se añadirán más funciones, como la edición de tareas, la gestión de etiquetas, etc.*
 
@@ -19,7 +20,7 @@ Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://pa
 Para Linux y macOS, use:
 
 ```sh
-$ curl -sfL https://layfellow.net/todoister/installer.sh | sh
+curl -sfL https://layfellow.net/todoister/installer.sh | sh
 ```
 
 Este script descarga el binario más reciente para su plataforma y lo instala en `~/.local/bin` o `~/bin`.
@@ -33,7 +34,7 @@ Alternativamente, si tiene Go (versión 1.24 o posterior), puede descargar, comp
 Todoister con:
 
 ```sh
-$ go install github.com/layfellow/todoister@latest
+go install github.com/layfellow/todoister@latest
 ```
 
 ## Configuración
@@ -71,13 +72,13 @@ depth = 0
 En lugar de un archivo de configuración, puede utilizar una variable de entorno para el token:
 
 ```sh
-$ export TODOIST_TOKEN='su-token-de-API-de-todoist'
+export TODOIST_TOKEN='su-token-de-API-de-todoist'
 ```
 
 O pase el token directamente a través de la línea de comandos:
 
 ```sh
-$ todoister --token='su-token-de-API-de-todoist' comando ...
+todoister --token='su-token-de-API-de-todoist' comando ...
 ```
 La opción `--token` tiene prioridad sobre la variable de entorno, que a su vez tiene precedencia sobre el archivo de configuración.
 
@@ -113,7 +114,3 @@ name = "/ruta/al/archivo.log"
 Los logs siguen el formato de
 [log estructurado](https://pkg.go.dev/log/slog) y se rotan automáticamente.
 No se escriben logs en modo interactivo.
-
-## Comandos
-
-Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.

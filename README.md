@@ -10,7 +10,8 @@ It also provides a much better export feature than the standard CSV backups:
 The Todoister export command supports structured JSON or YAML with configurable
 depth for nested directories.
 
-See the User's Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.
+> [!NOTE]
+> See the User's Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.
 
 *Todoister is still a work in progress. More features like task editing, tag management, etc. coming soon.*
 
@@ -19,7 +20,7 @@ See the User's Guide at [https://layfellow.net/todoister/](https://layfellow.net
 For Linux and macOS, use:
 
 ```sh
-$ curl -sfL https://layfellow.net/todoister/installer.sh | sh
+curl -sfL https://layfellow.net/todoister/installer.sh | sh
 ```
 
 This script fetches the latest binary for your platform and installs it in `~/.local/bin` or
@@ -34,7 +35,7 @@ Alternatively, if you have Go (version 1.24 or later), you can download, compile
 Todoister with:
 
 ```sh
-$ go install github.com/layfellow/todoister@latest
+go install github.com/layfellow/todoister@latest
 ```
 
 ## Configuration
@@ -72,12 +73,12 @@ depth = 0
 Instead of a configuration file, you can use an environment variable for the token:
 
 ```sh
-$ export TODOIST_TOKEN='your-todoist-API-token'
+export TODOIST_TOKEN='your-todoist-API-token'
 ```
 Or pass the token directly via the command line:
 
 ```sh
-$ todoister --token='your-todoist-API-token' command ...
+todoister --token='your-todoist-API-token' command ...
 ```
 The `--token` option takes precedence over the environment variable, which in turn overrides the
 configuration file.
@@ -117,8 +118,3 @@ name = "/path/to/log/file.log"
 Logs follow the
 [structured logging](https://pkg.go.dev/log/slog) format and are auto-rotated.
 No logs are written in interactive mode.
-
-
-## Commands
-
-See the User's Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.
