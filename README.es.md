@@ -11,7 +11,7 @@ la exportación de Todoister admite JSON o YAML estructurados con profundidad co
 para directorios anidados.
 
 > [!NOTE]
-> Consulte la Guía del Usuario en [https://parroquiano.net/todoister/](https://parroquiano.net/todoister/) para una referencia completa de los comandos implementados.
+> Consulte la Guía del Usuario en [https://todoister.parroquiano.net/](https://todoister.parroquiano.net/) para una referencia completa de los comandos implementados.
 
 *Todoister aún está en desarrollo. Próximamente se añadirán más funciones, como la edición de tareas, la gestión de etiquetas, etc.*
 
@@ -20,7 +20,7 @@ para directorios anidados.
 Para Linux y macOS, use:
 
 ```sh
-curl -sfL https://layfellow.net/todoister/installer.sh | sh
+curl -sfL https://todoister.layfellow.net/installer.sh | sh
 ```
 
 Este script descarga el binario más reciente para su plataforma y lo instala en `~/.local/bin` o `~/bin`.

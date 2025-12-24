@@ -11,7 +11,7 @@ The Todoister export command supports structured JSON or YAML with configurable
 depth for nested directories.
 
 > [!NOTE]
-> See the User's Guide at [https://layfellow.net/todoister/](https://layfellow.net/todoister/) for a complete reference of the implemented commands.
+> See the User's Guide at [https://todoister.layfellow.net/](https://todoister.layfellow.net/) for a complete reference of the implemented commands.
 
 *Todoister is still a work in progress. More features like task editing, tag management, etc. coming soon.*
 
@@ -20,7 +20,7 @@ depth for nested directories.
 For Linux and macOS, use:
 
 ```sh
-curl -sfL https://layfellow.net/todoister/installer.sh | sh
+curl -sfL https://todoister.layfellow.net/installer.sh | sh
 ```
 
 This script fetches the latest binary for your platform and installs it in `~/.local/bin` or
